@@ -1,8 +1,8 @@
+import prisma from '../../backend/Prisma'
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import { OAuth2Routes } from 'discord-api-types/v9'
 import { randomBytes } from 'crypto'
-import { queryTwitch, insertTwitch } from '../lib/supabase'
 
 const clientId = process.env.DISCORD_CLIENT_ID || ''
 const callbackUrl = process.env.TWITCH_CALLBACK_URL || ''
@@ -20,10 +20,30 @@ module.exports = {
   async execute(interaction: CommandInteraction): Promise<void> {
     const discordId = interaction.member?.user.id
     const state = randomBytes(20).toString('hex') + discordId
-    const userData = await queryTwitch(discordId)
+    const userData = await prisma.twitchlink.findUnique({
+      where: { discordId }
+    })
+    if (!discordId) {
+      interaction.reply({
+        content: 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ Discord',
+        ephemeral: true
+      })
+      return
+    }
     if (!userData?.twitchId) {
-      const response = await insertTwitch({ discordId, state })
-      if (response.success) {
+      const response = await prisma.twitchlink.upsert({
+        create: {
+          discordId,
+          state
+        },
+        update: {
+          state
+        },
+        where: {
+          discordId
+        }
+      })
+      if (response) {
         interaction.reply({
           content: `[คลิกที่นี่เพื่อเชื่อมต่อบัญชี Twitch กับ SniffsBot](${baseUrl.replace(
             '{state}',

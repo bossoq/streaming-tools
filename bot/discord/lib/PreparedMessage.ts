@@ -1,7 +1,7 @@
 import { embedMessageBuilder } from './MessageEmbed'
 import type { SendEmbed } from '../lib/MessageEmbed'
 import type { MessageEmbed } from 'discord.js'
-import type { VideosMeta } from '../youtubehook'
+import type { VideosMeta } from '../../backend/youtubehook'
 
 const thaiMonth: string[] = [
   'มกราคม',

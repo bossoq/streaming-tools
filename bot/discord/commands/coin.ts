@@ -1,7 +1,8 @@
+import prisma from '../../backend/Prisma'
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { getCoin, queryTwitch } from '../lib/supabase'
 import { MessageEmbed } from 'discord.js'
 import { embedMessageBuilder, ExtendsInteraction } from '../lib/MessageEmbed'
+import { getCoin } from '../../backend/prismaUtils'
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -18,7 +19,10 @@ module.exports = {
     let twitchId: string | undefined
     let inputId = interaction.options.getString('twitchid')
     if (!inputId) {
-      const response = await queryTwitch(discordId)
+      const response = await prisma.twitchlink.findUnique({
+        select: { twitchId: true },
+        where: { discordId }
+      })
       if (response) {
         if (response.twitchId) {
           twitchId = response.twitchId
@@ -27,7 +31,7 @@ module.exports = {
     } else {
       twitchId = inputId
     }
-    let coin: number | undefined
+    let coin: number | undefined | null
     if (twitchId) {
       coin = await getCoin(twitchId.toLowerCase())
     }

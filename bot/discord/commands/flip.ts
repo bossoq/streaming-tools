@@ -1,8 +1,9 @@
+import prisma from '../../backend/Prisma'
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { getCoin, queryTwitch, insertCoin } from '../lib/supabase'
+import { getCoin } from '../../backend/prismaUtils'
 import { ExtendsInteraction } from '../lib/MessageEmbed'
 import { preparedCoinFlip } from '../lib/PreparedMessage'
-import { ably } from '../lib/AblySub'
+import { ably } from '../../backend/AblySub'
 
 const fliprate = parseInt(process.env.COIN_FLIP_RATE || '50')
 const flipthreshold = parseInt(process.env.COIN_FLIP_THRESHOLD || '100')
@@ -29,7 +30,10 @@ module.exports = {
     const discordId = interaction.member?.user.id
     const side = interaction.options.getString('side')?.toLowerCase() || ''
     const playCoin = interaction.options.getInteger('coin') || 1
-    const userInfo = await queryTwitch(discordId)
+    const userInfo = await prisma.twitchlink.findUnique({
+      select: { twitchId: true },
+      where: { discordId }
+    })
     if (!['h', 't'].includes(side)) {
       interaction.reply({
         content: 'ใส่ด้านเหรียญที่จะทอยเป็น h หรือ t เท่านั้นนะ',
@@ -52,11 +56,11 @@ module.exports = {
           )
           const coinLeft = flipRand ? userCoin + playCoin : userCoin - playCoin
           const channel = ably.channels.get('webfeed')
-          const response = await insertCoin({
-            User_Name: twitchId,
-            Coin: coinLeft
+          const response = await prisma.userInfoDev.update({
+            where: { userName: twitchId },
+            data: { coin: coinLeft }
           })
-          if (!response.success) return
+          if (!response) return
           if (flipRand) {
             channel.publish(
               'webfeed',

@@ -1,5 +1,5 @@
+import prisma from '../../backend/Prisma'
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { getLeader } from '../lib/supabase'
 import { embedMessageBuilder, ExtendsInteraction } from '../lib/MessageEmbed'
 
 module.exports = {
@@ -7,12 +7,16 @@ module.exports = {
     .setName('leaderboard')
     .setDescription('Retrieve Sniffscoin Leaderboard!'),
   async execute(interaction: ExtendsInteraction): Promise<void> {
-    const leaderboard = await getLeader(20)
+    const leaderboard = await prisma.userInfoDev.findMany({
+      select: { userName: true, coin: true },
+      take: 20,
+      orderBy: { coin: 'desc' }
+    })
     if (leaderboard.length) {
       const resp = embedMessageBuilder(
         leaderboard.map((player, idx) => ({
-          name: player.User_Name,
-          value: player.Coin.toString(),
+          name: player.userName,
+          value: player.coin!.toString(),
           inline: idx >= 5
         }))
       )

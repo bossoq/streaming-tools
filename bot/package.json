@@ -10,7 +10,7 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node .",
-    "dev": "ts-node-dev .",
+    "dev": "ts-node-dev --respawn -- .",
     "deploy-commands": "ts-node discord/deploy-commands"
   },
   "dependencies": {
@@ -18,7 +18,7 @@
     "@discordjs/opus": "^0.7.0",
     "@discordjs/rest": "^0.3.0",
     "@discordjs/voice": "^0.8.0",
-    "@supabase/supabase-js": "^1.33.1",
+    "@prisma/client": "^3.12.0",
     "@twurple/api": "^5.0.18",
     "@twurple/auth": "^5.0.18",
     "@twurple/chat": "^5.0.18",
@@ -50,6 +50,7 @@
     "@types/node-cron": "^3.0.1",
     "@types/tmi.js": "^1.8.1",
     "@types/yt-search": "^2.3.2",
-    "eslint": "^8.11.0"
+    "eslint": "^8.11.0",
+    "prisma": "^3.12.0"
   }
 }

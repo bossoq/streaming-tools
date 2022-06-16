@@ -1,4 +1,4 @@
-import { subMessage } from './lib/AblySub'
+import { subMessage } from '../backend/AblySub'
 import {
   preparedLiveNotify,
   preparedCoinFlip,

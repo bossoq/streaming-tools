@@ -7,8 +7,6 @@ import {
   TextChannel
 } from 'discord.js'
 import { playMusic } from './playerhelper'
-// import { ablyMessage } from './ably'
-// import { YTHookService } from './youtubehook'
 import type { SlashCommandBuilder } from '@discordjs/builders'
 import type { SendEmbed } from './lib/MessageEmbed'
 
@@ -51,18 +49,6 @@ export class DiscordClient {
 
     this.client.once('ready', () => {
       console.log(`Logged into Discord as ${this.client.user!.tag}`)
-      // try {
-      //   ablyMessage()
-      //   console.log('Successfully sub to Ably')
-      // } catch (error) {
-      //   console.error(`Failed to sub Ably ${error}`)
-      // }
-      // try {
-      //   YTHookService()
-      //   console.log('Successfully start YT Webhook')
-      // } catch (error) {
-      //   console.error('Failed to start YT Webhook')
-      // }
       setInterval(() => {
         const servers = this.client.guilds.cache.size
         const servercount = this.client.guilds.cache.reduce(

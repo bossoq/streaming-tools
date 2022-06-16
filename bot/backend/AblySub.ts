@@ -15,9 +15,5 @@ export const subMessage = (
     callbackonMessage(msg)
   })
 
-  process.on('beforeExit', () => {
-    channel.unsubscribe()
-  })
-
   return channel
 }
