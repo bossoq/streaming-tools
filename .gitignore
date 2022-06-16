@@ -9,3 +9,4 @@ config.json
 # Ignore DevSpace cache and log folder
 .devspace/
 .tool-versions
+bot/state.json
