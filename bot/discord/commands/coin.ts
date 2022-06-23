@@ -16,37 +16,34 @@ module.exports = {
     ),
   async execute(interaction: ExtendsInteraction): Promise<void> {
     const discordId = interaction.member?.user.id
-    let twitchId: string | undefined
+    let twitchName: string | undefined
     let inputId = interaction.options.getString('twitchid')
+    let coin: number | undefined | null
     if (!inputId) {
-      const response = await prisma.twitchlink.findUnique({
-        select: { twitchId: true },
+      const response = await prisma.userInfo.findUnique({
+        select: { twitchName: true, coin: true },
         where: { discordId }
       })
       if (response) {
-        if (response.twitchId) {
-          twitchId = response.twitchId
-        }
+        twitchName = response.twitchName!
+        coin = Number(response.coin!)
       }
     } else {
-      twitchId = inputId
-    }
-    let coin: number | undefined | null
-    if (twitchId) {
-      coin = await getCoin(twitchId.toLowerCase())
+      twitchName = inputId
+      coin = await getCoin(twitchName.toLowerCase())
     }
     let resp: MessageEmbed
     if (coin) {
       resp = embedMessageBuilder([
         {
-          name: `<${twitchId}>`,
+          name: `<${twitchName}>`,
           value: `มียอดคงเหลือ ${coin} Sniffscoin`
         }
       ])
     } else {
       resp = embedMessageBuilder([
         {
-          name: `<${twitchId ? twitchId : 'ไม่ใส่ Username'}>`,
+          name: `<${twitchName ? twitchName : 'ไม่ใส่ Username'}>`,
           value: `ไม่พบ Username นี้ โปรใส่ Twitch Username...`
         }
       ])

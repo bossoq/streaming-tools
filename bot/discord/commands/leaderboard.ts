@@ -7,15 +7,15 @@ module.exports = {
     .setName('leaderboard')
     .setDescription('Retrieve Sniffscoin Leaderboard!'),
   async execute(interaction: ExtendsInteraction): Promise<void> {
-    const leaderboard = await prisma.userInfoDev.findMany({
-      select: { userName: true, coin: true },
+    const leaderboard = await prisma.userInfo.findMany({
+      select: { twitchName: true, coin: true },
       take: 20,
       orderBy: { coin: 'desc' }
     })
     if (leaderboard.length) {
       const resp = embedMessageBuilder(
         leaderboard.map((player, idx) => ({
-          name: player.userName,
+          name: player.twitchName!,
           value: player.coin!.toString(),
           inline: idx >= 5
         }))

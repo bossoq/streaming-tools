@@ -1,6 +1,7 @@
 import dotenvFlow from 'dotenv-flow'
 dotenvFlow.config()
 
+import { createClient } from 'redis'
 import { DiscordClient } from './discord/discord'
 import { Player } from './discord/lib/Player'
 import { twitchClient } from './twitch/twitch'
@@ -8,16 +9,18 @@ import { eventsubClient } from './backend/twitchpubsub'
 import { app } from './backend/express'
 import { pubSubCron, requestPubSub } from './backend/youtubehook'
 import { ablyMessage } from './discord/ably'
-import { botState } from './backend/state'
-import { syncStateFile } from './backend/state'
 import { apiClient } from './backend/twitchapiclient'
 
 const userId = process.env.TWITCH_USERID || '218581653'
 const port = process.env.PORT || 3000
+const redisURL = process.env.REDIS_URL || 'redis://localhost:6379'
+
+const redisClient = createClient({ url: redisURL })
+redisClient.connect().catch(console.error)
 
 export const discordClient = new DiscordClient()
 export const player = new Player()
-export const twitchChatClient = twitchClient()
+export const twitchChatClient = twitchClient(redisClient)
 export const twitchApiClient = apiClient()
 const eventsubMiddleWare = eventsubClient(app)
 eventsubMiddleWare.then((middleWare) => {
@@ -37,13 +40,11 @@ eventsubMiddleWare.then((middleWare) => {
     console.log('Start Youtube PubSub Client & Cron')
     ablyMessage()
     console.log('Successfully sub to Ably')
-    syncStateFile.start()
-    console.log('Start state file sync cron')
   })
 })
 
 const cleanExit = () => {
-  botState.writeStateFile()
+  redisClient.disconnect()
   process.exit()
 }
 

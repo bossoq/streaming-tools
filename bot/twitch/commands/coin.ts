@@ -7,15 +7,21 @@ const coin: TwitchCommand = {
   execute: async (client, channel, _user, _message, tag) => {
     await upsertUser(tag.userInfo.userId, tag.userInfo.userName)
 
-    const user = await prisma.userInfoDev.findUnique({
-      where: { userId: tag.userInfo.userId }
+    const user = await prisma.userInfo.findUnique({
+      where: { twitchId: tag.userInfo.userId }
     })
 
     if (user) {
-      client.say(
-        channel,
-        `${tag.userInfo.userName} มี ${user.coin} sniffscoin sniffsAH`
-      )
+      if (process.env.ENV == 'prod') {
+        client.say(
+          channel,
+          `${tag.userInfo.userName} มี ${user.coin} sniffscoin sniffsAH`
+        )
+      } else {
+        console.log(
+          `${tag.userInfo.userName} มี ${user.coin} sniffscoin sniffsAH`
+        )
+      }
     }
   }
 }

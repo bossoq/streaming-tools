@@ -26,26 +26,32 @@ const payday: TwitchCommand = {
     )
 
     // upsert user
-    await prisma.userInfoDev.createMany({
-      data: chatterWithId.map((v) => ({ userId: v.id, userName: v.name })),
+    await prisma.userInfo.createMany({
+      data: chatterWithId.map((v) => ({ twitchId: v.id, twitchName: v.name })),
       skipDuplicates: true
     })
     // add coin
-    await prisma.userInfoDev.updateMany({
+    await prisma.userInfo.updateMany({
       data: {
         coin: {
           increment: amount
         }
       },
       where: {
-        userId: { in: chatterWithId.map((v) => v.id) }
+        twitchId: { in: chatterWithId.map((v) => v.id) }
       }
     })
 
-    client.say(
-      channel,
-      `ผู้ชมทั้งหมด ${chatterList.length} คน ได้รับ ${amount} sniffscoin sniffsAH`
-    )
+    if (process.env.ENV == 'prod') {
+      client.say(
+        channel,
+        `ผู้ชมทั้งหมด ${chatterList.length} คน ได้รับ ${amount} sniffscoin sniffsAH`
+      )
+    } else {
+      console.log(
+        `ผู้ชมทั้งหมด ${chatterList.length} คน ได้รับ ${amount} sniffscoin sniffsAH`
+      )
+    }
   }
 }
 

@@ -1,6 +1,5 @@
 import prisma from '../../backend/Prisma'
 import { SlashCommandBuilder } from '@discordjs/builders'
-import { getCoin } from '../../backend/prismaUtils'
 import { ExtendsInteraction } from '../lib/MessageEmbed'
 import { preparedCoinFlip } from '../lib/PreparedMessage'
 import { ably } from '../../backend/AblySub'
@@ -30,8 +29,8 @@ module.exports = {
     const discordId = interaction.member?.user.id
     const side = interaction.options.getString('side')?.toLowerCase() || ''
     const playCoin = interaction.options.getInteger('coin') || 1
-    const userInfo = await prisma.twitchlink.findUnique({
-      select: { twitchId: true },
+    const userInfo = await prisma.userInfo.findUnique({
+      select: { twitchName: true, coin: true },
       where: { discordId }
     })
     if (!['h', 't'].includes(side)) {
@@ -42,9 +41,9 @@ module.exports = {
       return
     }
     if (userInfo) {
-      const twitchId = userInfo.twitchId
-      if (twitchId) {
-        const userCoin = await getCoin(twitchId.toLowerCase())
+      const twitchName = userInfo.twitchName!
+      if (twitchName) {
+        const userCoin = Number(userInfo.coin)
         if (userCoin && userCoin >= playCoin) {
           const flip = ['h', 't']
           const flipRand =
@@ -56,8 +55,8 @@ module.exports = {
           )
           const coinLeft = flipRand ? userCoin + playCoin : userCoin - playCoin
           const channel = ably.channels.get('webfeed')
-          const response = await prisma.userInfoDev.update({
-            where: { userName: twitchId },
+          const response = await prisma.userInfo.update({
+            where: { twitchName },
             data: { coin: coinLeft }
           })
           if (!response) return
@@ -65,7 +64,7 @@ module.exports = {
             channel.publish(
               'webfeed',
               winFeed
-                .replace('{username}', twitchId)
+                .replace('{username}', twitchName)
                 .replace('{prize}', (playCoin * 2).toString())
                 .replace('{win_side}', tossResult === 'h' ? 'หัว' : 'ก้อย')
                 .replace('{coin_left}', coinLeft.toString())
@@ -74,13 +73,13 @@ module.exports = {
             channel.publish(
               'webfeed',
               lossFeed
-                .replace('{username}', twitchId)
+                .replace('{username}', twitchName)
                 .replace('{win_side}', tossResult === 'h' ? 'หัว' : 'ก้อย')
                 .replace('{coin_left}', coinLeft.toString())
             )
           }
           const payload = {
-            username: twitchId,
+            username: twitchName,
             win_side: tossResult === 'h' ? 'หัว' : 'ก้อย',
             coin_left: coinLeft,
             win: tossResult === side,

@@ -1,24 +1,32 @@
-import { botState } from '../../backend/state'
 import type { TwitchCommand } from '../types'
 
 const webfeed: TwitchCommand = {
   name: '!webfeed',
-  execute: async (client, channel, _user, message, tag) => {
+  execute: async (client, channel, _user, message, tag, misc) => {
     if (!tag.userInfo.isBroadcaster && !tag.userInfo.isMod) return
     const matches = message.match(/^!webfeed (on)?(off)?/)
 
     if (matches) {
       const [, on, off] = matches
-      const state = await botState.getState('feedEnable')
+      const state =
+        (await misc?.redis?.hGet('twitchBotStat', 'feedEnable')) === 'on'
       if (on) {
         if (!state) {
-          botState.setState('feedEnable', true)
-          await client.say(channel, 'Webfeed System started sniffsAH')
+          await misc?.redis?.hSet('twitchBotStat', 'feedEnable', 'on')
+          if (process.env.ENV == 'prod') {
+            await client.say(channel, 'Webfeed System started sniffsAH')
+          } else {
+            console.log('Webfeed System started sniffsAH')
+          }
         }
       } else if (off) {
         if (state) {
-          botState.setState('feedEnable', false)
-          await client.say(channel, 'Webfeed System stopped sniffsAH')
+          await misc?.redis?.hSet('twitchBotStat', 'feedEnable', 'off')
+          if (process.env.ENV == 'prod') {
+            await client.say(channel, 'Webfeed System stopped sniffsAH')
+          } else {
+            console.log('Webfeed System stopped sniffsAH')
+          }
         }
       }
     }

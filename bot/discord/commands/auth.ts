@@ -3,9 +3,14 @@ import { SlashCommandBuilder } from '@discordjs/builders'
 import { CommandInteraction } from 'discord.js'
 import { OAuth2Routes } from 'discord-api-types/v9'
 import { randomBytes } from 'crypto'
+import { createClient } from 'redis'
 
 const clientId = process.env.DISCORD_CLIENT_ID || ''
 const callbackUrl = process.env.TWITCH_CALLBACK_URL || ''
+const redisURL = process.env.REDIS_URL || 'redis://localhost:6379'
+
+const redisClient = createClient({ url: redisURL })
+redisClient.connect().catch(console.error)
 
 const baseUrl: string = `${
   OAuth2Routes.authorizationURL
@@ -20,7 +25,7 @@ module.exports = {
   async execute(interaction: CommandInteraction): Promise<void> {
     const discordId = interaction.member?.user.id
     const state = randomBytes(20).toString('hex') + discordId
-    const userData = await prisma.twitchlink.findUnique({
+    const userData = await prisma.userInfo.findUnique({
       where: { discordId }
     })
     if (!discordId) {
@@ -31,17 +36,8 @@ module.exports = {
       return
     }
     if (!userData?.twitchId) {
-      const response = await prisma.twitchlink.upsert({
-        create: {
-          discordId,
-          state
-        },
-        update: {
-          state
-        },
-        where: {
-          discordId
-        }
+      const response = await redisClient.set(`${discordId}-state`, state, {
+        EX: 300
       })
       if (response) {
         interaction.reply({

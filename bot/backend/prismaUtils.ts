@@ -1,24 +1,24 @@
 import prisma from './Prisma'
 
-export const upsertUser = async (userId: string, userName: string) => {
-  await prisma.userInfoDev.upsert({
+export const upsertUser = async (twitchId: string, twitchName: string) => {
+  await prisma.userInfo.upsert({
     create: {
-      userId,
-      userName
+      twitchId,
+      twitchName
     },
     update: {
-      userName
+      twitchName
     },
     where: {
-      userId
+      twitchId
     }
   })
 }
 
-export const getCoin = async (userName: string): Promise<number> => {
-  const response = await prisma.userInfoDev.findUnique({
+export const getCoin = async (twitchName: string): Promise<number> => {
+  const response = await prisma.userInfo.findUnique({
     select: { coin: true },
-    where: { userName }
+    where: { twitchName }
   })
   if (response) {
     return Number(response.coin)
