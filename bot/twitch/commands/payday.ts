@@ -3,9 +3,7 @@ import type { TwitchCommand } from '../types'
 
 const payday: TwitchCommand = {
   name: '!payday',
-  execute: async (client, channel, _user, message, tag, misc) => {
-    const env =
-      (await misc?.redis?.hGet('twitchBotStat', 'env')) === 'production'
+  execute: async (_client, channel, _user, message, tag, misc) => {
     if (!tag.userInfo.isBroadcaster && !tag.userInfo.isMod) return
 
     const [_, ...args] = message.split(/\s+/)
@@ -21,16 +19,10 @@ const payday: TwitchCommand = {
 
     const chatterLength = await bulkCoin(channel, amount)
 
-    if (env) {
-      client.say(
-        channel,
-        `ผู้ชมทั้งหมด ${chatterLength} คน ได้รับ ${amount} sniffscoin sniffsAH`
-      )
-    } else {
-      console.log(
-        `ผู้ชมทั้งหมด ${chatterLength} คน ได้รับ ${amount} sniffscoin sniffsAH`
-      )
-    }
+    await misc?.sendMessage!(
+      channel,
+      `ผู้ชมทั้งหมด ${chatterLength} คน ได้รับ ${amount} sniffscoin sniffsAH`
+    )
   }
 }
 

@@ -38,12 +38,48 @@ export const twitchClient = async (
     commands.set(command.name, command)
   }
 
+  const sendMessage = async (channel: string, message: string) => {
+    const env =
+      (await redisClient.hGet('twitchBotStat', 'env')) === 'production'
+    if (env) {
+      await chatClient.say(channel, message)
+    } else {
+      console.log(`[${channel}] ${message}`)
+    }
+  }
+  const timeout = async (
+    channel: string,
+    userName: string,
+    duration?: number,
+    reason?: string
+  ) => {
+    const env =
+      (await redisClient.hGet('twitchBotStat', 'env')) === 'production'
+    if (env) {
+      await chatClient.timeout(
+        channel,
+        userName,
+        duration ?? 60,
+        reason ?? 'โดนลงดาบนะจ๊ะ'
+      )
+    } else {
+      console.log(
+        `[${channel}] ${userName} timeout for ${
+          duration ?? 60
+        } seconds with reason: ${reason ?? 'โดนลงดาบนะจ๊ะ'}`
+      )
+    }
+  }
+
   chatClient.onMessage(async (channel, user, message, tag) => {
     const subMonth = parseInt(tag.userInfo.badgeInfo.get('subscriber') || '0')
     await upsertUser(tag.userInfo.userName, tag.userInfo.userId, subMonth)
     console.log(`${channel} ${user}: ${message}`)
     if (tag.isCheer) {
-      await onBits(chatClient, channel, tag, subMonth, { redis: redisClient })
+      await onBits(chatClient, channel, tag, subMonth, {
+        redis: redisClient,
+        sendMessage
+      })
     }
     // console.log(
     //   `userId: ${tag.userInfo.userId}, userName: ${
@@ -72,7 +108,9 @@ export const twitchClient = async (
 
     if (cooldown) {
       command.execute(chatClient, channel, user, message, tag, {
-        redis: redisClient
+        redis: redisClient,
+        sendMessage,
+        timeout
       })
     }
   })

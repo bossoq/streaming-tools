@@ -2,9 +2,7 @@ import type { TwitchCommand } from '../types'
 
 const webfeed: TwitchCommand = {
   name: '!webfeed',
-  execute: async (client, channel, _user, message, tag, misc) => {
-    const env =
-      (await misc?.redis?.hGet('twitchBotStat', 'env')) === 'production'
+  execute: async (_client, channel, _user, message, tag, misc) => {
     if (!tag.userInfo.isBroadcaster && !tag.userInfo.isMod) return
     const matches = message.match(/^!webfeed (on)?(off)?/)
 
@@ -15,20 +13,12 @@ const webfeed: TwitchCommand = {
       if (on) {
         if (!state) {
           await misc?.redis?.hSet('twitchBotStat', 'feedEnable', 'on')
-          if (env) {
-            await client.say(channel, 'Webfeed System started sniffsAH')
-          } else {
-            console.log('Webfeed System started sniffsAH')
-          }
+          await misc?.sendMessage!(channel, 'Webfeed System started sniffsAH')
         }
       } else if (off) {
         if (state) {
           await misc?.redis?.hSet('twitchBotStat', 'feedEnable', 'off')
-          if (env) {
-            await client.say(channel, 'Webfeed System stopped sniffsAH')
-          } else {
-            console.log('Webfeed System stopped sniffsAH')
-          }
+          await misc?.sendMessage!(channel, 'Webfeed System stopped sniffsAH')
         }
       }
     }

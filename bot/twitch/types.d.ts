@@ -16,4 +16,11 @@ export interface TwitchCommand {
 
 export interface TwitchMisc {
   redis?: ReturnType<typeof createClient>
+  sendMessage?: (channel: string, message: string) => Promise<void>
+  timeout?: (
+    channel: string,
+    userName: string,
+    duration?: number,
+    reason?: string
+  ) => Promise<void>
 }
