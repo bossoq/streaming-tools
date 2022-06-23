@@ -4,6 +4,7 @@ import { ChatClient } from '@twurple/chat'
 import { upsertUser } from '../backend/prismaUtils'
 import type { createClient } from 'redis'
 import type { TwitchCommand } from './types'
+import { onBits } from './actions'
 
 const clientId = process.env.TWITCH_CLIENT_ID || ''
 const accessToken = process.env.TWITCH_ACCESS_TOKEN || ''
@@ -41,9 +42,7 @@ export const twitchClient = async (
     await upsertUser(tag.userInfo.userName, tag.userInfo.userId, subMonth)
     console.log(`${channel} ${user}: ${message}`)
     if (tag.isCheer) {
-      console.log(
-        `isBits: ${tag.isCheer}, bits: ${tag.bits}, channelId: ${tag.channelId}, messageId: ${tag.id}`
-      )
+      await onBits(chatClient, channel, tag, subMonth, { redis: redisClient })
     }
     // console.log(
     //   `userId: ${tag.userInfo.userId}, userName: ${
