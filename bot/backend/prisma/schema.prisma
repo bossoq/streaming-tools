@@ -18,9 +18,9 @@ model songRequest {
 
 model userInfo {
   id           BigInt    @id @default(autoincrement())
-  twitchId     String?
+  twitchId     String?   @unique
   twitchName   String?
-  discordId    String?
+  discordId    String?   @unique
   coin         BigInt?   @default(0)
   watchTime    BigInt?   @default(0)
   subMonth     BigInt?   @default(0)
