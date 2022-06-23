@@ -3,7 +3,9 @@ import type { TwitchCommand } from '../types'
 
 const payday: TwitchCommand = {
   name: '!payday',
-  execute: async (client, channel, _user, message, tag) => {
+  execute: async (client, channel, _user, message, tag, misc) => {
+    const env =
+      (await misc?.redis?.hGet('twitchBotStat', 'env')) === 'production'
     if (!tag.userInfo.isBroadcaster && !tag.userInfo.isMod) return
 
     const [_, ...args] = message.split(/\s+/)

@@ -14,9 +14,11 @@ import { apiClient } from './backend/twitchapiclient'
 const userId = process.env.TWITCH_USERID || '218581653'
 const port = process.env.PORT || 3000
 const redisURL = process.env.REDIS_URL || 'redis://localhost:6379'
+const env = process.env.NODE_ENV || 'development'
 
 const redisClient = createClient({ url: redisURL })
 redisClient.connect().catch(console.error)
+redisClient.hSet('twitchBotStat', 'env', env)
 
 export const discordClient = new DiscordClient()
 export const player = new Player()
