@@ -1,5 +1,4 @@
-import { twitchApiClient } from '../../index'
-import prisma from '../../backend/Prisma'
+import { bulkCoin } from '../../backend/prismaUtils'
 import type { TwitchCommand } from '../types'
 
 const payday: TwitchCommand = {
@@ -18,38 +17,16 @@ const payday: TwitchCommand = {
       }
     }
 
-    const chatterList = (
-      await twitchApiClient.unsupported.getChatters(channel.slice(1))
-    ).allChatters
-    const chatterWithId = await twitchApiClient.users.getUsersByNames(
-      chatterList
-    )
+    const chatterLength = await bulkCoin(channel, amount)
 
-    // upsert user
-    await prisma.userInfo.createMany({
-      data: chatterWithId.map((v) => ({ twitchId: v.id, twitchName: v.name })),
-      skipDuplicates: true
-    })
-    // add coin
-    await prisma.userInfo.updateMany({
-      data: {
-        coin: {
-          increment: amount
-        }
-      },
-      where: {
-        twitchId: { in: chatterWithId.map((v) => v.id) }
-      }
-    })
-
-    if (process.env.ENV == 'prod') {
+    if (env) {
       client.say(
         channel,
-        `ผู้ชมทั้งหมด ${chatterList.length} คน ได้รับ ${amount} sniffscoin sniffsAH`
+        `ผู้ชมทั้งหมด ${chatterLength} คน ได้รับ ${amount} sniffscoin sniffsAH`
       )
     } else {
       console.log(
-        `ผู้ชมทั้งหมด ${chatterList.length} คน ได้รับ ${amount} sniffscoin sniffsAH`
+        `ผู้ชมทั้งหมด ${chatterLength} คน ได้รับ ${amount} sniffscoin sniffsAH`
       )
     }
   }

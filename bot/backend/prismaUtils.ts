@@ -45,3 +45,31 @@ export const getCoin = async (twitchName: string): Promise<number> => {
   }
   return 0
 }
+
+export const bulkCoin = async (
+  channel: string,
+  coinAmount: number
+): Promise<number> => {
+  const chatterList = (
+    await twitchApiClient.unsupported.getChatters(channel.slice(1))
+  ).allChatters
+  const chatterWithId = await twitchApiClient.users.getUsersByNames(chatterList)
+
+  // upsert user
+  await prisma.userInfo.createMany({
+    data: chatterWithId.map((v) => ({ twitchId: v.id, twitchName: v.name })),
+    skipDuplicates: true
+  })
+  // add coin
+  await prisma.userInfo.updateMany({
+    data: {
+      coin: {
+        increment: coinAmount
+      }
+    },
+    where: {
+      twitchId: { in: chatterWithId.map((v) => v.id) }
+    }
+  })
+  return chatterList.length
+}
