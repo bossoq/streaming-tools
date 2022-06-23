@@ -17,22 +17,63 @@ model songrequest {
 }
 
 model twitchlink {
-  discordId    String       @id
-  twitchId     String?      @unique
+  discordId    String    @id
+  twitchId     String?   @unique
   state        String
   code         String?
   authToken    String?
   refreshToken String?
-  userInfoDev  userInfoDev? @relation(fields: [twitchId], references: [userName], onDelete: NoAction, onUpdate: NoAction)
+  userinfo     userinfo? @relation(fields: [twitchId], references: [User_Name], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model userInfoDev {
-  userId       String      @id @unique
-  userName     String      @unique
-  coin         BigInt?     @default(0)
-  watchTime    BigInt?     @default(0)
-  subMonth     BigInt?     @default(0)
-  creationTime DateTime?   @default(now()) @db.Timestamptz(6)
-  updateTime   DateTime?   @default(now()) @db.Timestamptz(6)
-  twitchlink   twitchlink?
+  userId       String    @id @unique
+  userName     String    @unique
+  coin         BigInt?   @default(0)
+  watchTime    BigInt?   @default(0)
+  subMonth     BigInt?   @default(0)
+  creationTime DateTime? @default(now()) @db.Timestamptz(6)
+  updateTime   DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model userInfo {
+  id           BigInt    @id @default(autoincrement())
+  twitchId     String?
+  twitchName   String?
+  discordId    String?
+  coin         BigInt?   @default(0)
+  watchTime    BigInt?   @default(0)
+  subMonth     BigInt?   @default(0)
+  creationTime DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model userinfo {
+  User_Name   String      @id
+  Coin        BigInt      @default(0)
+  Watch_Time  BigInt      @default(0)
+  Sub_Month   BigInt      @default(0)
+  Create_Time DateTime    @default(now()) @db.Timestamp(6)
+  Update_Time DateTime    @default(now()) @db.Timestamp(6)
+  twitchlink  twitchlink?
+}
+
+model userinfo_duplicate {
+  userName     String   @id
+  coin         BigInt   @default(0)
+  watchTime    BigInt   @default(0)
+  subMonth     BigInt   @default(0)
+  creationTime DateTime @default(now()) @db.Timestamp(6)
+  updateTime   DateTime @default(now()) @db.Timestamp(6)
+  userId       String?  @unique
+}
+
+model ytvideo {
+  id           String    @id
+  title        String?
+  description  String?
+  thumbnail    String?
+  live         String?
+  publishTime  DateTime? @db.Timestamp(6)
+  channelId    String?
+  channelTitle String?
 }
