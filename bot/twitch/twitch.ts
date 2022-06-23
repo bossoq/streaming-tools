@@ -2,9 +2,10 @@ import fs from 'node:fs'
 import { StaticAuthProvider } from '@twurple/auth'
 import { ChatClient } from '@twurple/chat'
 import { upsertUser } from '../backend/prismaUtils'
+import { onBits } from './actions'
+import { checkCooldown } from './cooldown'
 import type { createClient } from 'redis'
 import type { TwitchCommand } from './types'
-import { onBits } from './actions'
 
 const clientId = process.env.TWITCH_CLIENT_ID || ''
 const accessToken = process.env.TWITCH_ACCESS_TOKEN || ''
@@ -65,10 +66,15 @@ export const twitchClient = async (
     const command = commands.get(commandStr)
 
     if (!command) return
-
-    command.execute(chatClient, channel, user, message, tag, {
+    const cooldown = await checkCooldown(commandStr, tag, {
       redis: redisClient
     })
+
+    if (cooldown) {
+      command.execute(chatClient, channel, user, message, tag, {
+        redis: redisClient
+      })
+    }
   })
   // normal subscriptions <- this should reward coins
   chatClient.onSub((channel, user, subInfo) => {
