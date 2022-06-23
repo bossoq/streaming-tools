@@ -32,7 +32,7 @@ export const preparedLiveNotify = (payload: Record<string, any>): SendEmbed => {
   const embedMessage = embedMessageBuilder([
     {
       name: 'Game',
-      value: payload.game_name,
+      value: payload.gameName,
       inline: true
     },
     {
@@ -43,16 +43,16 @@ export const preparedLiveNotify = (payload: Record<string, any>): SendEmbed => {
   ])
   embedMessage
     .setTitle(payload.title)
-    .setURL(`https://www.twitch.tv/${payload.user_name.toLowerCase()}`)
-    .setAuthor({ name: payload.user_name, iconURL: profileImg })
+    .setURL(`https://www.twitch.tv/${payload.userName.toLowerCase()}`)
+    .setAuthor({ name: payload.userName, iconURL: profileImg })
     .setThumbnail(profileImg)
     .setImage(
-      payload.thumbnail_url.replace('{width}', '320').replace('{height}', '180')
+      payload.thumbnailUrl.replace('{width}', '320').replace('{height}', '180')
     )
   return {
     content: `ทุกโคนน @everyone, ${
-      payload.user_name
-    } เค้าไลฟ์อยู่นะ>> https://www.twitch.tv/${payload.user_name.toLowerCase()}`,
+      payload.userName
+    } เค้าไลฟ์อยู่นะ>> https://www.twitch.tv/${payload.userName.toLowerCase()}`,
     embeds: [embedMessage]
   }
 }

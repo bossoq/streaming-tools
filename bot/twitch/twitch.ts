@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import { StaticAuthProvider } from '@twurple/auth'
 import { ChatClient } from '@twurple/chat'
 import { upsertUser } from '../backend/prismaUtils'
-import { onBits } from './actions'
+import { handleChannelPoints, onBits } from './actions'
 import { checkCooldown } from './cooldown'
 import type { createClient } from 'redis'
 import type { TwitchCommand } from './types'
@@ -76,10 +76,13 @@ export const twitchClient = async (
     await upsertUser(tag.userInfo.userName, tag.userInfo.userId, subMonth)
     console.log(`${channel} ${user}: ${message}`)
     if (tag.isCheer) {
-      await onBits(chatClient, channel, tag, subMonth, {
+      await onBits(channel, tag, subMonth, {
         redis: redisClient,
         sendMessage
       })
+    }
+    if (tag.isRedemption) {
+      await handleChannelPoints(tag)
     }
     // console.log(
     //   `userId: ${tag.userInfo.userId}, userName: ${

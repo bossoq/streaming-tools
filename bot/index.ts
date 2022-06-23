@@ -9,7 +9,9 @@ import { eventsubClient } from './backend/twitchpubsub'
 import { app } from './backend/express'
 import { pubSubCron, requestPubSub } from './backend/youtubehook'
 import { ablyMessage } from './discord/ably'
+import { pubMessage } from './backend/AblySub'
 import { apiClient } from './backend/twitchapiclient'
+import { sendLiveNotify } from './twitch/actions'
 
 const userId = process.env.TWITCH_USERID || '218581653'
 const port = process.env.PORT || 3000
@@ -30,11 +32,13 @@ eventsubMiddleWare.then((middleWare) => {
     console.log(`Successfully start Express Server on ${port}`)
     await middleWare.markAsReady()
 
-    await middleWare.subscribeToStreamOnlineEvents(userId, (e) => {
+    await middleWare.subscribeToStreamOnlineEvents(userId, async (e) => {
       console.log(`${e.broadcasterDisplayName} just went live!`)
+      await sendLiveNotify(e, { redis: redisClient, pubMessage })
     })
-    await middleWare.subscribeToStreamOfflineEvents(userId, (e) => {
+    await middleWare.subscribeToStreamOfflineEvents(userId, async (e) => {
       console.log(`${e.broadcasterDisplayName} just went offline`)
+      await redisClient.hSet('twitchBotStat', 'isLive', 'false')
     })
     console.log(`Successfully create Twitch PubSub Client for ${userId}`)
     await requestPubSub()

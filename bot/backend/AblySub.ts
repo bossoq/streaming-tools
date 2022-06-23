@@ -17,3 +17,9 @@ export const subMessage = (
 
   return channel
 }
+
+export const pubMessage = (channelName: string, name: string, data: string) => {
+  const channel: Types.RealtimeChannelPromise = ably.channels.get(channelName)
+
+  channel.publish(name, data)
+}

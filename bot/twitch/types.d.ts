@@ -23,4 +23,5 @@ export interface TwitchMisc {
     duration?: number,
     reason?: string
   ) => Promise<void>
+  pubMessage?: (channelName: string, name: string, data: string) => void
 }
