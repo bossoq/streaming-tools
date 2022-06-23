@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import { StaticAuthProvider } from '@twurple/auth'
 import { ChatClient } from '@twurple/chat'
+import { upsertUser } from '../backend/prismaUtils'
 import type { createClient } from 'redis'
 import type { TwitchCommand } from './types'
 
@@ -35,8 +36,9 @@ export const twitchClient = async (
     commands.set(command.name, command)
   }
 
-  chatClient.onMessage((channel, user, message, tag) => {
-    // console.log(`${channel} ${user}: ${message}`)
+  chatClient.onMessage(async (channel, user, message, tag) => {
+    await upsertUser(tag.userInfo.userName, tag.userInfo.userId)
+    console.log(`${channel} ${user}: ${message}`)
     if (tag.isCheer) {
       console.log(
         `isBits: ${tag.isCheer}, bits: ${tag.bits}, channelId: ${tag.channelId}, messageId: ${tag.id}`
