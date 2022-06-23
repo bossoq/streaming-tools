@@ -1,5 +1,5 @@
 import type { ChatClient } from '@twurple/chat'
-import type { TwitchPrivateMessage } from '@twurple/chat'
+import type { TwitchPrivateMessage } from '@twurple/chat/lib/commands/TwitchPrivateMessage'
 import type { createClient } from 'redis'
 
 export interface TwitchCommand {
@@ -10,8 +10,10 @@ export interface TwitchCommand {
     userName: string,
     message: string,
     tag: TwitchPrivateMessage,
-    misc?: {
-      redis?: ReturnType<typeof createClient>
-    }
+    misc?: TwitchMisc
   ) => void
+}
+
+export interface TwitchMisc {
+  redis?: ReturnType<typeof createClient>
 }

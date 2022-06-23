@@ -37,7 +37,8 @@ export const twitchClient = async (
   }
 
   chatClient.onMessage(async (channel, user, message, tag) => {
-    await upsertUser(tag.userInfo.userName, tag.userInfo.userId)
+    const subMonth = parseInt(tag.userInfo.badgeInfo.get('subscriber') || '0')
+    await upsertUser(tag.userInfo.userName, tag.userInfo.userId, subMonth)
     console.log(`${channel} ${user}: ${message}`)
     if (tag.isCheer) {
       console.log(

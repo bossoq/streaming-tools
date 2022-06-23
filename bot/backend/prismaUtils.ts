@@ -1,7 +1,11 @@
 import { twitchApiClient } from '../index'
 import prisma from './Prisma'
 
-export const upsertUser = async (twitchName: string, twitchId: string) => {
+export const upsertUser = async (
+  twitchName: string,
+  twitchId: string,
+  subMonth: number
+) => {
   const response = await prisma.userInfo.findUnique({
     select: { twitchId: true },
     where: { twitchName }
@@ -10,10 +14,12 @@ export const upsertUser = async (twitchName: string, twitchId: string) => {
     return await prisma.userInfo.upsert({
       create: {
         twitchName,
-        twitchId
+        twitchId,
+        subMonth
       },
       update: {
-        twitchName
+        twitchName,
+        subMonth
       },
       where: {
         twitchId
@@ -23,10 +29,12 @@ export const upsertUser = async (twitchName: string, twitchId: string) => {
     return await prisma.userInfo.upsert({
       create: {
         twitchName,
-        twitchId
+        twitchId,
+        subMonth
       },
       update: {
-        twitchId
+        twitchId,
+        subMonth
       },
       where: {
         twitchName
