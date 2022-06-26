@@ -10,3 +10,4 @@ config.json
 .devspace/
 .tool-versions
 bot/state.json
+sample-log
