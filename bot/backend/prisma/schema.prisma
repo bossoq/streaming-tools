@@ -7,14 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model songRequest {
-  id         BigInt   @id @default(autoincrement())
-  songName   String   @unique
-  vote       BigInt
-  ts         DateTime @db.Timestamp(6)
-  songKey    String
-  nowPlaying Boolean  @default(false)
-}
+// model songRequest {
+//   id         BigInt   @id @default(autoincrement())
+//   songName   String   @unique
+//   vote       BigInt
+//   ts         DateTime @db.Timestamp(6)
+//   songKey    String
+//   nowPlaying Boolean  @default(false)
+// }
 
 model userInfo {
   id           BigInt    @id @default(autoincrement())
