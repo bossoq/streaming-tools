@@ -14,11 +14,29 @@ const webfeed: TwitchCommand = {
         if (!state) {
           await misc?.redis?.hSet('twitchBotStat', 'feedEnable', 'on')
           await misc?.sendMessage!(channel, 'Webfeed System started sniffsAH')
+          const message = {
+            status: true
+          }
+          const payload = {
+            type: 'webfeed',
+            message,
+            timeout: 30000
+          }
+          misc?.pubMessage!('webfeed', 'feedmessage', JSON.stringify(payload))
         }
       } else if (off) {
         if (state) {
           await misc?.redis?.hSet('twitchBotStat', 'feedEnable', 'off')
           await misc?.sendMessage!(channel, 'Webfeed System stopped sniffsAH')
+          const message = {
+            status: false
+          }
+          const payload = {
+            type: 'webfeed',
+            message,
+            timeout: 30000
+          }
+          misc?.pubMessage!('webfeed', 'feedmessage', JSON.stringify(payload))
         }
       }
     }

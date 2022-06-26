@@ -17,12 +17,24 @@ const payday: TwitchCommand = {
       }
     }
 
+    if (amount <= 0) return
+
     const chatterLength = await bulkCoin(channel, amount)
 
-    await misc?.sendMessage!(
+    await misc?.sendFeedMessage!(
       channel,
       `ผู้ชมทั้งหมด ${chatterLength} คน ได้รับ ${amount} sniffscoin sniffsAH`
     )
+    const messageFeed = {
+      coin: amount,
+      viewer: chatterLength
+    }
+    const payload = {
+      type: 'paydayfeed',
+      message: messageFeed,
+      timeout: 10000
+    }
+    misc?.pubMessage!('webfeed', 'feedmessage', JSON.stringify(payload))
   }
 }
 

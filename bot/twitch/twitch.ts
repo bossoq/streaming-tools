@@ -2,7 +2,14 @@ import fs from 'node:fs'
 import { StaticAuthProvider } from '@twurple/auth'
 import { ChatClient } from '@twurple/chat'
 import { upsertUser } from '../backend/prismaUtils'
-import { handleChannelPoints, onBits } from './actions'
+import {
+  handleChannelPoints,
+  onBits,
+  onSubGift,
+  onSub,
+  onCommunitySub,
+  onRaid
+} from './actions'
 import { checkCooldown } from './cooldown'
 import type { createClient } from 'redis'
 import type { TwitchCommand } from './types'
@@ -13,7 +20,8 @@ const botNick = process.env.TWITCH_BOT_NICK || ''
 const channelName = process.env.TWITCH_CHANNEL_NAME || ''
 
 export const twitchClient = async (
-  redisClient: ReturnType<typeof createClient>
+  redisClient: ReturnType<typeof createClient>,
+  pubMessage: (channelName: string, name: string, data: string) => void
 ) => {
   const authProvider = new StaticAuthProvider(clientId, accessToken)
   const chatClient = new ChatClient({
@@ -35,13 +43,31 @@ export const twitchClient = async (
 
   for (const file of commandFiles) {
     const command: TwitchCommand = require(`./commands/${file}`).default
-    commands.set(command.name, command)
+
+    if (Array.isArray(command.name)) {
+      for (const name of command.name) {
+        commands.set(name, command)
+      }
+    } else {
+      commands.set(command.name, command)
+    }
   }
 
   const sendMessage = async (channel: string, message: string) => {
     const env =
       (await redisClient.hGet('twitchBotStat', 'env')) === 'production'
     if (env) {
+      await chatClient.say(channel, message)
+    } else {
+      console.log(`[${channel}] ${message}`)
+    }
+  }
+  const sendFeedMessage = async (channel: string, message: string) => {
+    const env =
+      (await redisClient.hGet('twitchBotStat', 'env')) === 'production'
+    const webfeed =
+      (await redisClient.hGet('twitchBotStat', 'feedEnable')) === 'on'
+    if (env && !webfeed) {
       await chatClient.say(channel, message)
     } else {
       console.log(`[${channel}] ${message}`)
@@ -70,6 +96,17 @@ export const twitchClient = async (
       )
     }
   }
+  const ban = async (channel: string, userName: string, reason?: string) => {
+    const env =
+      (await redisClient.hGet('twitchBotStat', 'env')) === 'production'
+    if (env) {
+      await chatClient.ban(channel, userName, reason ?? 'โดนลงดาบนะจ๊ะ')
+    } else {
+      console.log(
+        `[${channel}] ${userName} ban with reason: ${reason ?? 'โดนลงดาบนะจ๊ะ'}`
+      )
+    }
+  }
 
   chatClient.onMessage(async (channel, user, message, tag) => {
     const subMonth = parseInt(tag.userInfo.badgeInfo.get('subscriber') || '0')
@@ -78,11 +115,12 @@ export const twitchClient = async (
     if (tag.isCheer) {
       await onBits(channel, tag, subMonth, {
         redis: redisClient,
-        sendMessage
+        sendMessage,
+        pubMessage
       })
     }
     if (tag.isRedemption) {
-      await handleChannelPoints(tag)
+      await handleChannelPoints(tag, subMonth)
     }
     // console.log(
     //   `userId: ${tag.userInfo.userId}, userName: ${
@@ -113,29 +151,36 @@ export const twitchClient = async (
       command.execute(chatClient, channel, user, message, tag, {
         redis: redisClient,
         sendMessage,
-        timeout
+        sendFeedMessage,
+        timeout,
+        ban,
+        pubMessage
       })
     }
   })
   // normal subscriptions <- this should reward coins
-  chatClient.onSub((channel, user, subInfo) => {
-    console.log(`${channel} ${user} subscribed ${JSON.stringify(subInfo)}`)
+  chatClient.onSub(async (channel, _user, subInfo) => {
+    await onSub(channel, subInfo, { sendMessage, sendFeedMessage, pubMessage })
   })
   // extend subscriptions <- this should not reward coins
-  chatClient.onSubExtend((channel, user, subInfo) => {
-    console.log(`${channel} ${user} sub extend ${JSON.stringify(subInfo)}`)
-  })
+  // chatClient.onSubExtend((channel, user, subInfo) => {
+  //   console.log(`${channel} ${user} sub extend ${JSON.stringify(subInfo)}`)
+  // })
   // resubscriptions <- this should reward coins
-  chatClient.onResub((channel, user, subInfo) => {
-    console.log(`${channel} ${user} resubscribed ${JSON.stringify(subInfo)}`)
+  chatClient.onResub(async (channel, _user, subInfo) => {
+    await onSub(channel, subInfo, { sendMessage, sendFeedMessage, pubMessage })
   })
   // gift sub to specific viewer // this will be called by on community sub <- this should reward coins
-  chatClient.onSubGift((channel, user, subInfo) => {
-    console.log(`${channel} ${user} gifted ${JSON.stringify(subInfo)}`)
+  chatClient.onSubGift(async (channel, _user, subInfo) => {
+    await onSubGift(channel, subInfo, {
+      sendMessage,
+      sendFeedMessage,
+      pubMessage
+    })
   })
   // gift sub non specific viewer <- this should reward coins but need to check with onSubGift
-  chatClient.onCommunitySub((channel, user, subInfo) => {
-    console.log(`${channel} ${user} gift sub ${JSON.stringify(subInfo)}`)
+  chatClient.onCommunitySub(async (channel, _user, subInfo) => {
+    await onCommunitySub(channel, subInfo, { sendMessage, pubMessage })
   })
   // gift paid upgrade <- not sure
   chatClient.onGiftPaidUpgrade((channel, user, subInfo) => {
@@ -163,13 +208,14 @@ export const twitchClient = async (
       `${channel} ${user} prime paid upgrade ${JSON.stringify(subInfo)}`
     )
   })
+  // TODO: Add watchtime function
   // user join channel
-  chatClient.onJoin((channel, user) => {
-    console.log(`${channel} ${user} joined`)
+  chatClient.onJoin((_channel, _user) => {
+    // console.log(`${channel} ${user} joined`)
   })
   // user part channel
-  chatClient.onPart((channel, user) => {
-    console.log(`${channel} ${user} parted`)
+  chatClient.onPart((_channel, _user) => {
+    // console.log(`${channel} ${user} parted`)
   })
   // user timeout
   chatClient.onTimeout((channel, user, duration) => {
@@ -180,8 +226,8 @@ export const twitchClient = async (
     console.log(`${channel} ${user} was banned`)
   })
   // not sure if this called when raid or be raided
-  chatClient.onRaid((channel, user, raidInfo) => {
-    console.log(`${channel} ${user} raid ${JSON.stringify(raidInfo)}`)
+  chatClient.onRaid(async (channel, _user, raidInfo) => {
+    await onRaid(channel, raidInfo, { sendFeedMessage, pubMessage })
   })
   return chatClient
 }

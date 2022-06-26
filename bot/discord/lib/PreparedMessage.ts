@@ -27,8 +27,8 @@ const getThaiDateString = () => {
 }
 
 export const preparedLiveNotify = (payload: Record<string, any>): SendEmbed => {
-  const profileImg: string =
-    'https://teopwbuwkgtwnhmddsuj.supabase.in/storage/v1/object/public/sniffsbot-asset/images/sniffsprofile.png'
+  // const profileImg: string =
+  //   'https://teopwbuwkgtwnhmddsuj.supabase.in/storage/v1/object/public/sniffsbot-asset/images/sniffsprofile.png'
   const embedMessage = embedMessageBuilder([
     {
       name: 'Game',
@@ -44,8 +44,8 @@ export const preparedLiveNotify = (payload: Record<string, any>): SendEmbed => {
   embedMessage
     .setTitle(payload.title)
     .setURL(`https://www.twitch.tv/${payload.userName.toLowerCase()}`)
-    .setAuthor({ name: payload.userName, iconURL: profileImg })
-    .setThumbnail(profileImg)
+    .setAuthor({ name: payload.userName, iconURL: payload.profileUrl })
+    .setThumbnail(payload.profileUrl)
     .setImage(
       payload.thumbnailUrl.replace('{width}', '320').replace('{height}', '180')
     )

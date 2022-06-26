@@ -1,7 +1,21 @@
 import type { TwitchPrivateMessage } from '@twurple/chat/lib/commands/TwitchPrivateMessage'
 import type { TwitchMisc } from './types'
 
-const globalCooldown = ['!uptime', '!dis', '!fb', '!yt', '!ig', '!cmd', '!np']
+const globalCooldown = [
+  '!uptime',
+  '!dis',
+  '!discord',
+  '!fb',
+  '!facebook',
+  '!yt',
+  '!youtube',
+  '!ig',
+  '!instagram',
+  '!cmd',
+  '!command',
+  '!commands',
+  '!np'
+]
 const bypassCooldown = [
   '!env',
   '!market',
@@ -24,6 +38,7 @@ export const checkCooldown = async (
   tag: TwitchPrivateMessage,
   misc: TwitchMisc
 ): Promise<boolean> => {
+  if (tag.userInfo.isBroadcaster || tag.userInfo.isMod) return true
   if (bypassCooldown.includes(command)) return true
   const timestampNow = Date.now()
   let cooldown: number

@@ -1,6 +1,6 @@
 import type { TwitchCommand } from '../types'
 
-const coin: TwitchCommand = {
+const env: TwitchCommand = {
   name: '!env',
   execute: async (client, channel, _user, message, tag, misc) => {
     if (!tag.userInfo.isBroadcaster && !tag.userInfo.isMod) return
@@ -22,4 +22,4 @@ const coin: TwitchCommand = {
   }
 }
 
-export default coin
+export default env

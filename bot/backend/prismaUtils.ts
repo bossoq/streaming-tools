@@ -4,42 +4,72 @@ import prisma from './Prisma'
 export const upsertUser = async (
   twitchName: string,
   twitchId: string,
-  subMonth: number
+  subMonth?: number
 ) => {
   const response = await prisma.userInfo.findUnique({
     select: { twitchId: true },
     where: { twitchName }
   })
   if (!response || response?.twitchId) {
-    return await prisma.userInfo.upsert({
-      create: {
-        twitchName,
-        twitchId,
-        subMonth
-      },
-      update: {
-        twitchName,
-        subMonth
-      },
-      where: {
-        twitchId
-      }
-    })
+    if (subMonth) {
+      return await prisma.userInfo.upsert({
+        create: {
+          twitchName,
+          twitchId,
+          subMonth
+        },
+        update: {
+          twitchName,
+          subMonth
+        },
+        where: {
+          twitchId
+        }
+      })
+    } else {
+      return await prisma.userInfo.upsert({
+        create: {
+          twitchName,
+          twitchId
+        },
+        update: {
+          twitchName
+        },
+        where: {
+          twitchId
+        }
+      })
+    }
   } else {
-    return await prisma.userInfo.upsert({
-      create: {
-        twitchName,
-        twitchId,
-        subMonth
-      },
-      update: {
-        twitchId,
-        subMonth
-      },
-      where: {
-        twitchName
-      }
-    })
+    if (subMonth) {
+      return await prisma.userInfo.upsert({
+        create: {
+          twitchName,
+          twitchId,
+          subMonth
+        },
+        update: {
+          twitchId,
+          subMonth
+        },
+        where: {
+          twitchName
+        }
+      })
+    } else {
+      return await prisma.userInfo.upsert({
+        create: {
+          twitchName,
+          twitchId
+        },
+        update: {
+          twitchId
+        },
+        where: {
+          twitchName
+        }
+      })
+    }
   }
 }
 
@@ -61,11 +91,10 @@ export const bulkCoin = async (
   const chatterList = (
     await twitchApiClient.unsupported.getChatters(channel.slice(1))
   ).allChatters
-  const chatterWithId = await twitchApiClient.users.getUsersByNames(chatterList)
 
   // upsert user
   await prisma.userInfo.createMany({
-    data: chatterWithId.map((v) => ({ twitchId: v.id, twitchName: v.name })),
+    data: chatterList.map((v) => ({ twitchName: v })),
     skipDuplicates: true
   })
   // add coin
@@ -76,7 +105,7 @@ export const bulkCoin = async (
       }
     },
     where: {
-      twitchId: { in: chatterWithId.map((v) => v.id) }
+      twitchName: { in: chatterList }
     }
   })
   return chatterList.length
