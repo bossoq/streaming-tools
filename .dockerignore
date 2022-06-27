@@ -1,4 +1,4 @@
 Dockerfile
 .git
 node_modules/
-.env*
+
