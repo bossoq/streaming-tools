@@ -9,7 +9,7 @@
   "author": "Kittipos Wajakajornrit <kwajakajornrit@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node-dev --respawn -- .",
+    "start": "ts-node .",
     "dev": "ts-node-dev --respawn -- .",
     "deploy-commands": "ts-node discord/deploy-commands"
   },
@@ -29,7 +29,6 @@
     "discord-api-types": "^0.30.0",
     "discord-ytdl-core": "^5.0.4",
     "discord.js": "^13.6.0",
-    "dotenv": "^16.0.0",
     "dotenv-flow": "^3.2.0",
     "express": "^4.17.3",
     "express-xml-bodyparser": "^0.3.0",
