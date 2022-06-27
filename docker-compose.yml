@@ -2,10 +2,13 @@ version: '3'
 
 services:
   streaming-tools:
-    build: .
+    build:
+      context: .
+      args:
+        DATABASE_URL: ${DATABASE_URL}
     container_name: streaming-tools
     env_file:
-      - ./.env
+      - .env
     networks:
       br0:
         ipv4_address: '10.0.4.1'
