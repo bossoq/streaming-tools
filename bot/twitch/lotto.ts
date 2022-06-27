@@ -150,7 +150,13 @@ export const drawLotto = async (channel: string, misc: TwitchMisc) => {
   const message = {
     winNumber: drawNumber,
     payout,
-    usernames: winner.map((v: Record<string, number>) => v.twitchName)
+    usernames: winner
+      .map((v: Record<string, number>) => ({
+        [v.twitchName]: v.count * finalPrize
+      }))
+      .reduce((prev: Record<string, number>, cur: Record<string, number>) => {
+        return Object.assign(prev, cur)
+      }, {})
   }
   const payload = {
     type: 'drawLottoFeed',

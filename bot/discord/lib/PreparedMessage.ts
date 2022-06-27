@@ -129,7 +129,7 @@ export const preparedLottoDraw = (payload: Record<string, any>): SendEmbed => {
   resp
     .setTitle(`ประกาศผลรางวัล SniffsLotto ประจำวันที่ ${getThaiDateString()}`)
     .setDescription(
-      `เลขที่ออกได้แก่ ${payload.win_number} รางวัลรวม ${payload.payout} Sniffscoin`
+      `เลขที่ออกได้แก่ ${payload.winNumber} รางวัลรวม ${payload.payout} Sniffscoin`
     )
     .setThumbnail(
       'https://teopwbuwkgtwnhmddsuj.supabase.in/storage/v1/object/public/sniffsbot-asset/images/sniffsheart.png'
