@@ -27,8 +27,7 @@ export const twitchClient = async (
   const chatClient = new ChatClient({
     authProvider,
     channels: [channelName],
-    requestMembershipEvents: true,
-    webSocket: true
+    requestMembershipEvents: true
   })
   await chatClient.connect().catch(console.error)
   chatClient.onRegister(() => {
