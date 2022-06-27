@@ -5,7 +5,8 @@ export class AutoMessage {
   private promiseClient: Promise<ChatClient>
   private client: ChatClient
   private redis: ReturnType<typeof createClient>
-  private lottoInterval: NodeJS.Timeout
+  private lottoInterval: NodeJS.Timeout | undefined
+  private flipInterval: NodeJS.Timeout | undefined
 
   constructor(
     client: Promise<ChatClient>,
@@ -33,6 +34,32 @@ export class AutoMessage {
     }, 20 * 60 * 1000)
   }
   clearLottoAnnounce() {
-    clearInterval(this.lottoInterval)
+    clearInterval(this.lottoInterval!)
+    this.lottoInterval = undefined
+  }
+  async flipAnnounce() {
+    const announce =
+      'sniffsHi เร่เข้ามาเร่เข้ามา ปั่นแปะจ้า ปั่นแปะ !flip ตามด้วย h หรือ t sniffsAH'
+    const channelName = `#${process.env.TWITCH_CHANNEL_NAME}` || '#bosssoq'
+    console.log(this.flipInterval)
+    if (
+      this.flipInterval ||
+      (await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true'
+    )
+      return
+    if ((await this.redis.hGet('twitchBotStat', 'env')) !== 'production') return
+    await this.client.say(channelName, announce)
+    this.flipInterval = setInterval(async () => {
+      if ((await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true') {
+        clearInterval(this.flipInterval!)
+        this.flipInterval = undefined
+        return
+      }
+      await this.client.say(channelName, announce)
+    }, 5 * 60 * 1000)
+  }
+  clearFlipAnnounce() {
+    clearInterval(this.flipInterval!)
+    this.flipInterval = undefined
   }
 }

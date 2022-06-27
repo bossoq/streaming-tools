@@ -1,4 +1,5 @@
 import prisma from '../backend/Prisma'
+import { autoMessage } from '../index'
 import { bulkCoin, upsertUser } from '../backend/prismaUtils'
 import type { ChatClient } from '@twurple/chat'
 import type { TwitchPrivateMessage } from '@twurple/chat/lib/commands/TwitchPrivateMessage'
@@ -40,6 +41,7 @@ export const sendLiveNotify = async (
     `sniffsHi sniffsHi sniffsHi ${event.broadcasterDisplayName} มาแล้ววววว`
   )
   misc.pubMessage!('webfeed', 'livemessage', JSON.stringify(message))
+  await autoMessage.flipAnnounce()
 }
 
 export const sendOfflineNotify = async (
@@ -53,6 +55,7 @@ export const sendOfflineNotify = async (
     `#${event.broadcasterName}`,
     `sniffsSleep sniffsSleep sniffsSleep ${event.broadcasterDisplayName} ไปแล้ววววว`
   )
+  autoMessage.clearFlipAnnounce()
 }
 
 export const handleChannelPoints = async (
