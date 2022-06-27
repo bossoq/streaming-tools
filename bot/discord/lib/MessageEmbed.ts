@@ -17,7 +17,7 @@ export interface ExtendsInteraction extends CommandInteraction {
 }
 
 const footer: string =
-  'Contribute @ github: https://github.com/bossoq/SniffsbotDiscord'
+  'Contribute @ github: https://github.com/bossoq/streaming-tools'
 const footerImg: string =
   'https://teopwbuwkgtwnhmddsuj.supabase.in/storage/v1/object/public/sniffsbot-asset/images/GitHub-Mark-64px.png'
 

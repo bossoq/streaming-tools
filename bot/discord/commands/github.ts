@@ -6,13 +6,9 @@ type LinkName = {
   link: string
 }
 
-const twitchRepo: LinkName = {
-  name: 'SniffsLiveTwitchBot',
-  link: 'https://github.com/Ponny035/SniffsLiveTwitchBot'
-}
-const discordRepo: LinkName = {
-  name: 'SniffsbotDiscord',
-  link: 'https://github.com/bossoq/SniffsbotDiscord'
+const mainRepo: LinkName = {
+  name: 'streaming-tools',
+  link: 'https://github.com/bossoq/streaming-tools'
 }
 const webfeedRepo: LinkName = {
   name: 'SniffsbotWebfeed',
@@ -25,7 +21,7 @@ module.exports = {
     .setDescription('Retrieve Github Link!'),
   async execute(interaction: CommandInteraction): Promise<void> {
     interaction.reply({
-      content: `Twitch Bot: [${twitchRepo.name}](${twitchRepo.link})\nDiscord Bot: [${discordRepo.name}](${discordRepo.link})\nWebfeed Repo: [${webfeedRepo.name}](${webfeedRepo.link})`,
+      content: `Streaming-tools (Twitch+Discord): [${mainRepo.name}](${mainRepo.link})\nWebfeed Repo: [${webfeedRepo.name}](${webfeedRepo.link})`,
       embeds: [],
       ephemeral: true
     })
