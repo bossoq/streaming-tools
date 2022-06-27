@@ -4,6 +4,8 @@ services:
   streaming-tools:
     build: .
     container_name: streaming-tools
+    env_file:
+      - ./.env
     networks:
       br0:
         ipv4_address: '10.0.4.1'
