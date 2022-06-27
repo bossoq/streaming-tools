@@ -1,4 +1,6 @@
-import 'dotenv/config'
+import dotenv from 'dotenv'
+dotenv.config()
+console.log(process.env)
 
 import { createClient } from 'redis'
 import { DiscordClient } from './discord/discord'
