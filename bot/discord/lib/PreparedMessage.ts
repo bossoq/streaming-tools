@@ -67,12 +67,12 @@ export const preparedCoinFlip = (payload: Record<string, any>): SendEmbed => {
       },
       {
         name: 'เหรียญออก',
-        value: payload.win_side,
+        value: payload.winside,
         inline: true
       },
       {
         name: 'เงินคงเหลือ',
-        value: `${payload.coin_left.toString()} Sniffscoin`,
+        value: `${payload.coinleft.toString()} Sniffscoin`,
         inline: true
       }
     ])
@@ -85,12 +85,12 @@ export const preparedCoinFlip = (payload: Record<string, any>): SendEmbed => {
     resp = embedMessageBuilder([
       {
         name: 'เหรียญออก',
-        value: payload.win_side,
+        value: payload.winside,
         inline: true
       },
       {
         name: 'เงินคงเหลือ',
-        value: `${payload.coin_left.toString()} Sniffscoin`,
+        value: `${payload.coinleft.toString()} Sniffscoin`,
         inline: true
       }
     ])
