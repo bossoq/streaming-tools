@@ -98,7 +98,7 @@ const kill: TwitchCommand = {
             duration,
             `${tag.userInfo.displayName} จ้างมือปืนสนิฟยิงปิ้วๆ ${duration} วินาที`
           )
-          await misc?.sendMessage!(
+          await misc?.sendFeedMessage!(
             channel,
             `${tag.userInfo.displayName} จ้างมือปืนสนิฟยิง ${targetName} ${duration} วินาที sniffsAH`
           )
@@ -115,7 +115,7 @@ const kill: TwitchCommand = {
           }
           break
         case 'dodge':
-          await misc?.sendMessage!(
+          await misc?.sendFeedMessage!(
             channel,
             `${
               tag.userInfo.displayName
@@ -140,7 +140,7 @@ const kill: TwitchCommand = {
             duration,
             `บังอาจเหิมเกริมหรอ นั่งพักไปก่อน ${duration} วินาที`
           )
-          await misc?.sendMessage!(
+          await misc?.sendFeedMessage!(
             channel,
             `${tag.userInfo.displayName} บังอาจนักนะ PunOko บินไปเองซะ ${duration} วินาที`
           )
@@ -163,7 +163,7 @@ const kill: TwitchCommand = {
               duration * 2
             )} วินาที)`
           )
-          await misc?.sendMessage!(
+          await misc?.sendFeedMessage!(
             channel,
             `${
               tag.userInfo.displayName
@@ -188,7 +188,7 @@ const kill: TwitchCommand = {
             duration,
             `ไม่มีเงินจ้างมือปืนงั้นรึ โดนยิงเองซะ ${duration} วินาที`
           )
-          await misc?.sendMessage!(
+          await misc?.sendFeedMessage!(
             channel,
             `${tag.userInfo.displayName} ไม่มีเงินจ้างมือปืน PunOko โดนมือปืนยิงตาย ${duration} วินาที`
           )
@@ -209,7 +209,7 @@ const kill: TwitchCommand = {
             duration,
             `อยากไปเยือนยมโลกหรอ สนิฟจัดให้ ${duration} วินาที`
           )
-          await misc?.sendMessage!(
+          await misc?.sendFeedMessage!(
             channel,
             `${tag.userInfo.displayName} แวะไปเยือนยมโลก ${duration} วินาที sniffsAH`
           )

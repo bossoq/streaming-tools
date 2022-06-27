@@ -59,7 +59,7 @@ export const buyLotto = async (
     }
     await misc.redis?.hSet!('twitchBotStat', 'user-lotto', JSON.stringify(data))
     await misc.redis?.hSet!('twitchBotStat', 'user-lotto-count', count)
-    await misc.sendMessage!(
+    await misc.sendFeedMessage!(
       channel,
       `${tag.userInfo.displayName} ซื้อ SniffsLotto หมายเลข ${lottoNumber} จำนวน ${totalLottoCount} ใบ สำเร็จ sniffsHeart sniffsHeart sniffsHeart`
     )
