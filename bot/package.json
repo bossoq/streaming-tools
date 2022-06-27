@@ -29,7 +29,7 @@
     "discord-api-types": "^0.30.0",
     "discord-ytdl-core": "^5.0.4",
     "discord.js": "^13.6.0",
-    "dotenv-flow": "^3.2.0",
+    "dotenv": "^16.0.1",
     "express": "^4.17.3",
     "express-xml-bodyparser": "^0.3.0",
     "ffmpeg-static": "^5.0.0",
@@ -43,7 +43,6 @@
     "ytdl-core": "^4.11.0"
   },
   "devDependencies": {
-    "@types/dotenv-flow": "^3.2.0",
     "@types/express": "^4.17.13",
     "@types/express-xml-bodyparser": "^0.3.2",
     "@types/node": "^17.0.23",

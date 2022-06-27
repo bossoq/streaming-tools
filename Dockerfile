@@ -13,7 +13,7 @@ RUN echo "deb http://ftp.debianclub.org/debian buster main" > /etc/apt/sources.l
     apt-get update && \
     apt-get install -y libtool-bin build-essential python3
 
-RUN yarn global add node-gyp && yarn && yarn workspace bot add -D @types/dotenv-flow
+RUN yarn global add node-gyp && yarn
 
 COPY /bot ./bot
 COPY .env ./

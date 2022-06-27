@@ -1,5 +1,4 @@
-import dotenvFlow from 'dotenv-flow'
-dotenvFlow.config()
+import 'dotenv/config'
 
 import { createClient } from 'redis'
 import { DiscordClient } from './discord/discord'
