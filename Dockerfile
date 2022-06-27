@@ -5,6 +5,7 @@ WORKDIR /app
 ENV NODE_ENV production
 
 COPY package.json yarn.lock ./
+COPY /bot/package.json ./bot/package.json
 
 RUN echo "deb http://ftp.debianclub.org/debian buster main" > /etc/apt/sources.list && \
     echo "deb http://ftp.debianclub.org/debian-security buster/updates main" >> /etc/apt/sources.list && \
@@ -12,10 +13,10 @@ RUN echo "deb http://ftp.debianclub.org/debian buster main" > /etc/apt/sources.l
     apt-get update && \
     apt-get install -y libtool-bin build-essential python3
 
+RUN yarn global add node-gyp && yarn && yarn workspace bot add -D @types/dotenv-flow
+
 COPY /bot ./bot
 COPY .env ./
-
-RUN yarn global add node-gyp && yarn
 
 # Express Port
 EXPOSE 9876
