@@ -88,7 +88,6 @@ const lotto: TwitchCommand = {
             }
           }
           if (countNumber <= 0) countNumber = 1
-          console.log(`Buy Lotto ${lottoNumber} ${countNumber}`)
           await buyLotto(channel, tag, misc!, lottoNumber, countNumber)
         }
         return
