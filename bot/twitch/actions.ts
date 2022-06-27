@@ -42,6 +42,7 @@ export const sendLiveNotify = async (
   )
   misc.pubMessage!('webfeed', 'livemessage', JSON.stringify(message))
   await autoMessage.flipAnnounce()
+  await bulkCoin(`#${event.broadcasterName}`, 5)
 }
 
 export const sendOfflineNotify = async (
