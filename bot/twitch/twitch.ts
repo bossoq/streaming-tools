@@ -122,17 +122,6 @@ export const twitchClient = async (
     if (tag.isRedemption) {
       await handleChannelPoints(tag, subMonth)
     }
-    // console.log(
-    //   `userId: ${tag.userInfo.userId}, userName: ${
-    //     tag.userInfo.userName
-    //   }, displayName: ${tag.userInfo.displayName}, isBroadcaster: ${
-    //     tag.userInfo.isBroadcaster
-    //   }, isFounder: ${tag.userInfo.isFounder}, isMod: ${
-    //     tag.userInfo.isMod
-    //   }, isSubscriber: ${tag.userInfo.isSubscriber}, isVIP: ${
-    //     tag.userInfo.isVip
-    //   }, subMonth: ${tag.userInfo.badgeInfo.get('subscriber') || 0}`
-    // )
     if (user === botNick) return
 
     const commandStr = message

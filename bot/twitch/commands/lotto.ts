@@ -1,3 +1,4 @@
+import { autoMessage } from '../../index'
 import { buyLotto, drawLotto } from '../lotto'
 import type { TwitchCommand } from '../types'
 
@@ -25,7 +26,7 @@ const lotto: TwitchCommand = {
             misc?.pubMessage!('webfeed', 'feedmessage', JSON.stringify(payload))
           }
         }
-        // TODO: trigger cron message
+        await autoMessage.lottoAnnounce()
         break
       case 'stop':
         if (checkRole) {
@@ -46,7 +47,7 @@ const lotto: TwitchCommand = {
             misc?.pubMessage!('webfeed', 'feedmessage', JSON.stringify(payload))
           }
         }
-        // TODO: cancel cron message
+        autoMessage.clearLottoAnnounce()
         break
       case 'draw':
         if (checkRole) {
@@ -67,7 +68,7 @@ const lotto: TwitchCommand = {
             misc?.pubMessage!('webfeed', 'feedmessage', JSON.stringify(payload))
           }
         }
-        // TODO: cancel cron message
+        autoMessage.clearLottoAnnounce()
         await drawLotto(channel, misc!)
         break
       default:

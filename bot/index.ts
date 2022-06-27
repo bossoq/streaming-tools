@@ -12,6 +12,7 @@ import { ablyMessage } from './discord/ably'
 import { pubMessage } from './backend/AblySub'
 import { apiClient } from './backend/twitchapiclient'
 import { sendLiveNotify, sendOfflineNotify } from './twitch/actions'
+import { AutoMessage } from './twitch/automessage'
 
 const userId = process.env.TWITCH_USERID || '218581653'
 const port = process.env.PORT || 3000
@@ -26,6 +27,7 @@ export const discordClient = new DiscordClient()
 export const player = new Player()
 export const twitchChatClient = twitchClient(redisClient, pubMessage)
 export const twitchApiClient = apiClient()
+export const autoMessage = new AutoMessage(twitchChatClient, redisClient)
 const eventsubMiddleWare = eventsubClient(app)
 eventsubMiddleWare.then((middleWare) => {
   app.listen(port, async () => {
@@ -52,6 +54,7 @@ eventsubMiddleWare.then((middleWare) => {
     console.log('Start Youtube PubSub Client & Cron')
     ablyMessage()
     console.log('Successfully sub to Ably')
+    await autoMessage.initClient()
   })
 })
 
