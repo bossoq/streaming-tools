@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  streaming-tools:
+    build: .
+    container_name: streaming-tools
+    networks:
+      br0:
+        ipv4_address: '10.0.4.1'
+
+networks:
+  br0:
+    external:
+      name: br0
