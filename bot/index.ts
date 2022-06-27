@@ -13,6 +13,7 @@ import { pubMessage } from './backend/AblySub'
 import { apiClient } from './backend/twitchapiclient'
 import { sendLiveNotify, sendOfflineNotify } from './twitch/actions'
 import { AutoMessage } from './twitch/automessage'
+import { initializeStat } from './twitch/initialize'
 
 const userId = process.env.TWITCH_USERID || '218581653'
 const port = process.env.PORT || 3000
@@ -55,6 +56,7 @@ eventsubMiddleWare.then((middleWare) => {
     ablyMessage()
     console.log('Successfully sub to Ably')
     await autoMessage.initClient()
+    await initializeStat(redisClient)
   })
 })
 
