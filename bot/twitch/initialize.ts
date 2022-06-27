@@ -15,7 +15,6 @@ export const initializeStat = async (
       'startDate',
       streamInfo?.startDate.toString()
     )
-    await autoMessage.flipAnnounce()
   } else if (streamInfo?.type !== 'live' && isLive) {
     await redis.hSet('twitchBotStat', 'isLive', 'false')
     await redis.hDel('twitchBotStat', 'startDate')
@@ -36,4 +35,7 @@ export const initializeStat = async (
   if (!lottoOpen) {
     await redis.hSet('twitchBotStat', 'lotto', 'close')
   }
+  if (streamInfo?.type === 'live') await autoMessage.flipAnnounce()
+  if (streamInfo?.type === 'live' && lottoOpen === 'open')
+    await autoMessage.lottoAnnounce()
 }
