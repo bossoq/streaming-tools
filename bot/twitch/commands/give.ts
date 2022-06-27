@@ -8,7 +8,7 @@ const give: TwitchCommand = {
   execute: async (_client, channel, _user, message, tag, misc) => {
     if (!tag.userInfo.isBroadcaster && !tag.userInfo.isMod) return
 
-    const [_, recipentName, ...args] = message.split(/\s+/)
+    const [_, recipentNameArg, ...args] = message.split(/\s+/)
 
     let amount = 1
 
@@ -20,6 +20,14 @@ const give: TwitchCommand = {
     }
 
     if (amount <= 0) return
+
+    const recipentMatch = recipentNameArg.match(/^@?(\w+)$/)
+    let recipentName: string
+    if (recipentMatch && recipentMatch[1]) {
+      recipentName = recipentMatch[1]
+    } else {
+      return
+    }
 
     const recipentTag = await twitchApiClient.users.getUserByName(recipentName)
     if (!recipentTag) return

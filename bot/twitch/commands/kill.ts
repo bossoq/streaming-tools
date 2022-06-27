@@ -20,13 +20,21 @@ const kill: TwitchCommand = {
 
     const available = timestampNow - lastUsed > 1200 * 1000
 
-    const [_, targetName] = message.split(/\s+/)
-    if (!targetName) {
+    const [_, targetNameArg] = message.split(/\s+/)
+    if (!targetNameArg) {
       if (available)
         await misc?.sendMessage!(
           channel,
           'กรุณาระบุชื่อผู้ใช้ที่จะจ้างมือปืนสนิฟ'
         )
+      return
+    }
+
+    const targetMatch = targetNameArg.match(/^@?(\w+)$/)
+    let targetName: string
+    if (targetMatch && targetMatch[1]) {
+      targetName = targetMatch[1]
+    } else {
       return
     }
 
