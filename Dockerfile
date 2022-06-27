@@ -14,9 +14,9 @@ COPY package.json yarn.lock ./
 COPY /bot/package.json ./bot/package.json
 
 RUN yarn global add node-gyp && yarn
-RUN npx prisma generate --schema=/app/bot/backend/prisma/schema.prisma
 
 COPY /bot ./bot
+RUN npx prisma generate --schema=./bot/backend/prisma/schema.prisma
 COPY .env ./
 
 # Express Port
