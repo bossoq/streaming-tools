@@ -7,11 +7,6 @@ import { ably } from '../../backend/AblySub'
 const fliprate = parseInt(process.env.COIN_FLIP_RATE || '50')
 const flipthreshold = parseInt(process.env.COIN_FLIP_THRESHOLD || '100')
 
-const winFeed =
-  '<span class="tag is-info has-text-weight-bold ml-2 mr-2 is-medium">{username}</span><span class="text-white">ได้รับ {prize} Sniffscoin <span class="icon"><i class="fas fa-hand-holding-usd"></i></span> Coinflip ออก{win_side} ({coin_left})</span>'
-const lossFeed =
-  '<span class="tag is-danger has-text-weight-bold ml-2 mr-2 is-medium">{username}</span><span class="text-white">เสียใจด้วยนะ Coinflip ออก{win_side} ({coin_left})</span>'
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('flip')
@@ -60,33 +55,21 @@ module.exports = {
             data: { coin: coinLeft }
           })
           if (!response) return
-          if (flipRand) {
-            channel.publish(
-              'webfeed',
-              winFeed
-                .replace('{username}', twitchName)
-                .replace('{prize}', (playCoin * 2).toString())
-                .replace('{win_side}', tossResult === 'h' ? 'หัว' : 'ก้อย')
-                .replace('{coin_left}', coinLeft.toString())
-            )
-          } else {
-            channel.publish(
-              'webfeed',
-              lossFeed
-                .replace('{username}', twitchName)
-                .replace('{win_side}', tossResult === 'h' ? 'หัว' : 'ก้อย')
-                .replace('{coin_left}', coinLeft.toString())
-            )
-          }
-          const payload = {
+          const message = {
             username: twitchName,
             winside: tossResult === 'h' ? 'หัว' : 'ก้อย',
             coinleft: coinLeft,
             win: tossResult === side,
             prize: playCoin * 2
           }
-          channel.publish('coinflip', JSON.stringify(payload))
-          const { embeds } = preparedCoinFlip(payload)
+          const payload = {
+            type: 'coinflipFeed',
+            message,
+            timeout: 10000
+          }
+          channel.publish('feedmessage', JSON.stringify(payload))
+          channel.publish('coinflip', JSON.stringify(message))
+          const { embeds } = preparedCoinFlip(message)
           interaction.reply({
             embeds,
             ephemeral: true
