@@ -81,7 +81,7 @@ module.exports = {
           const payload = {
             username: twitchName,
             win_side: tossResult === 'h' ? 'หัว' : 'ก้อย',
-            coin_left: coinLeft,
+            coinleft: coinLeft,
             win: tossResult === side,
             prize: playCoin * 2
           }
