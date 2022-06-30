@@ -103,7 +103,7 @@ export const onBits = async (
       where: { twitchId: tag.userInfo.userId },
       data: { coin: { increment: coinAmount } }
     })
-    await misc.sendMessage!(
+    await misc.sendFeedMessage!(
       channel,
       `${tag.userInfo.userName} ได้รับ ${coinAmount} sniffscoin จากการ Bit จำนวน ${tag.bits} bit sniffsHeart sniffsHeart sniffsHeart`
     )
@@ -220,7 +220,7 @@ export const onSubGift = async (
       where: { twitchId: subInfo.gifterUserId },
       data: { coin: { increment: coinAmount } }
     })
-    await misc.sendMessage!(
+    await misc.sendFeedMessage!(
       channel,
       `${subInfo.gifterDisplayName} ได้รับ ${coinAmount} sniffscoin จากการ Gift ให้ ${subInfo.displayName} ระดับ ${planSelect} sniffsHeart sniffsHeart sniffsHeart`
     )
@@ -242,7 +242,7 @@ export const onSubGift = async (
     }
     misc.pubMessage!('webfeed', 'feedmessage', JSON.stringify(payload))
   } else {
-    await misc.sendMessage!(
+    await misc.sendFeedMessage!(
       channel,
       `ขอบคุณ Gift ระดับ ${planSelect} จากผู้ไม่ประสงค์ออกนามค่าา sniffsHeart sniffsHeart sniffsHeart`
     )
