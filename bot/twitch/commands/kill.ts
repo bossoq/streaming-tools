@@ -54,8 +54,13 @@ const kill: TwitchCommand = {
         payRate = 10
         shooterState = 'me'
       }
-      if (targetRole === 'moderators' || targetRole === 'vips') {
+      if (
+        targetRole === 'broadcaster' ||
+        targetRole === 'moderators' ||
+        targetRole === 'vips'
+      ) {
         shooterState = 'vip'
+        if (override) return
       }
 
       const employerData = await prisma.userInfo.findUnique({
