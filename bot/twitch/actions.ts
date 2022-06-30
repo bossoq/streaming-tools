@@ -224,7 +224,7 @@ export const onSubGift = async (
       channel,
       `${subInfo.gifterDisplayName} ได้รับ ${coinAmount} sniffscoin จากการ Gift ให้ ${subInfo.displayName} ระดับ ${planSelect} sniffsHeart sniffsHeart sniffsHeart`
     )
-    await misc.sendMessage!(
+    await misc.sendFeedMessage!(
       channel,
       `${subInfo.displayName} ได้รับ ${coinAmount} sniffscoin จากการได้รับ Gift ระดับ ${planSelect} และผู้ชมทั้งหมด ${chatterLength} คนได้รับ 1 sniffscoin`
     )
@@ -291,7 +291,7 @@ export const onCommunitySub = async (
       break
   }
   if (subInfo.gifter && subInfo.gifterUserId) {
-    await misc.sendMessage!(
+    await misc.sendFeedMessage!(
       channel,
       `${subInfo.gifterDisplayName} ได้รับ ${coinAmount} sniffscoin จากการ Gift ระดับ ${planSelect} ให้สมาชิก ${subInfo.count} คน sniffsHeart sniffsHeart sniffsHeart`
     )
