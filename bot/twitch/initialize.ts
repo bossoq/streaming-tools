@@ -35,7 +35,10 @@ export const initializeStat = async (
   if (!lottoOpen) {
     await redis.hSet('twitchBotStat', 'lotto', 'close')
   }
-  if (streamInfo?.type === 'live') await autoMessage.flipAnnounce()
+  if (streamInfo?.type === 'live') {
+    await autoMessage.flipAnnounce()
+    await autoMessage.giveCoin()
+  }
   if (streamInfo?.type === 'live' && lottoOpen === 'open')
     await autoMessage.lottoAnnounce()
 }

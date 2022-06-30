@@ -1,5 +1,6 @@
 import type { ChatClient } from '@twurple/chat'
 import type { createClient } from 'redis'
+import { bulkCoin } from '../backend/prismaUtils'
 
 export class AutoMessage {
   private promiseClient: Promise<ChatClient>
@@ -7,6 +8,7 @@ export class AutoMessage {
   private redis: ReturnType<typeof createClient>
   private lottoInterval: NodeJS.Timeout | undefined
   private flipInterval: NodeJS.Timeout | undefined
+  private coinInterval: NodeJS.Timeout | undefined
 
   constructor(
     client: Promise<ChatClient>,
@@ -61,5 +63,25 @@ export class AutoMessage {
   clearFlipAnnounce() {
     clearInterval(this.flipInterval!)
     this.flipInterval = undefined
+  }
+  async giveCoin() {
+    const channelName = `#${process.env.TWITCH_CHANNEL_NAME}` || '#bosssoq'
+    if (
+      this.coinInterval ||
+      (await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true'
+    )
+      return
+    this.coinInterval = setInterval(async () => {
+      if ((await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true') {
+        clearInterval(this.coinInterval!)
+        this.coinInterval = undefined
+        return
+      }
+      await bulkCoin(channelName, 1)
+    }, 60 * 60 * 1000)
+  }
+  clearCoinInterval() {
+    clearInterval(this.coinInterval!)
+    this.coinInterval = undefined
   }
 }
