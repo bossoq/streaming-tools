@@ -43,7 +43,6 @@ export class AutoMessage {
     const announce =
       'sniffsHi เร่เข้ามาเร่เข้ามา ปั่นแปะจ้า ปั่นแปะ !flip ตามด้วย h หรือ t sniffsAH'
     const channelName = `#${process.env.TWITCH_CHANNEL_NAME}` || '#bosssoq'
-    console.log(this.flipInterval)
     if (
       this.flipInterval ||
       (await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true'
