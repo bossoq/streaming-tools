@@ -115,6 +115,7 @@ export const twitchClient = async (
       await onBits(channel, tag, subMonth, {
         redis: redisClient,
         sendMessage,
+        sendFeedMessage,
         pubMessage
       })
     }
@@ -168,7 +169,11 @@ export const twitchClient = async (
   })
   // gift sub non specific viewer <- this should reward coins but need to check with onSubGift
   chatClient.onCommunitySub(async (channel, _user, subInfo) => {
-    await onCommunitySub(channel, subInfo, { sendMessage, pubMessage })
+    await onCommunitySub(channel, subInfo, {
+      sendMessage,
+      sendFeedMessage,
+      pubMessage
+    })
   })
   // gift paid upgrade <- not sure
   chatClient.onGiftPaidUpgrade((channel, user, subInfo) => {
