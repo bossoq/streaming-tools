@@ -209,7 +209,6 @@ export class Player {
       }
     }
     const resp = await ytdl.getBasicInfo(songUrl)
-    console.log({ resp })
     const streamObj = {
       title: resp.videoDetails.title,
       length: resp.videoDetails.lengthSeconds,
