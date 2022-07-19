@@ -44,11 +44,18 @@ const kill: TwitchCommand = {
     const allChatters = chatterList.allChatters
     if (!allChatters.includes(targetName) && targetName !== 'me') {
       if (available)
-        await misc?.sendMessage!(channel, `ไม่พบชื่อ ${targetName}`)
+        await misc?.sendMessage!(channel, `ไม่พบชื่อ ${targetName} ในสมรภูมินะ`)
       return
     }
     if (available || override) {
       const targetRole = chatterList.allChattersWithStatus.get(targetName)
+      if (!targetRole) {
+        misc?.sendMessage!(
+          channel,
+          `มือปืนหาเป้าหมาย ${targetName} ไม่เจอ ลองยิงใหม่นะ`
+        )
+        return
+      }
       let shooterState = 'success'
       if (targetName === 'me') {
         payRate = 10
