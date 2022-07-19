@@ -54,13 +54,21 @@ const kill: TwitchCommand = {
         payRate = 10
         shooterState = 'me'
       }
-      if (
-        targetRole === 'broadcaster' ||
-        targetRole === 'moderators' ||
-        targetRole === 'vips'
-      ) {
-        shooterState = 'vip'
-        if (override) return
+      if (targetRole === 'broadcaster' || targetRole === 'moderators') {
+        if (override) {
+          misc?.sendMessage!(
+            channel,
+            `${tag.userInfo.displayName} กับ ${targetName} ไม่ตีกันเองสิ`
+          )
+          return
+        } else {
+          shooterState = 'vip'
+        }
+      }
+      if (targetRole === 'vips') {
+        if (!override && !tag.userInfo.isVip) {
+          shooterState = 'vip'
+        }
       }
 
       const employerData = await prisma.userInfo.findUnique({
