@@ -50,7 +50,7 @@ const kill: TwitchCommand = {
     }
     if (available || override) {
       const targetRole = chatterList.allChattersWithStatus.get(targetName)
-      if (!targetRole) {
+      if (!targetRole && targetName !== 'me') {
         misc?.sendMessage!(
           channel,
           `มือปืนหาเป้าหมาย ${targetName} ไม่เจอ ลองยิงใหม่นะ`
