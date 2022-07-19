@@ -59,6 +59,7 @@ const kill: TwitchCommand = {
       }
       let shooterState = 'success'
       if (targetName === 'me') {
+        if (override) return
         payRate = 10
         shooterState = 'me'
       }
