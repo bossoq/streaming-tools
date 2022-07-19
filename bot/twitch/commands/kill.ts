@@ -16,6 +16,7 @@ const kill: TwitchCommand = {
     if (tag.userInfo.isBroadcaster || tag.userInfo.isMod) {
       override = true
       dodgeRate = 0
+      payRate = 0
     }
 
     const available = timestampNow - lastUsed > 1200 * 1000
