@@ -42,6 +42,7 @@ export const sendLiveNotify = async (
   )
   misc.pubMessage!('webfeed', 'livemessage', JSON.stringify(message))
   await autoMessage.flipAnnounce()
+  await autoMessage.tipmeAnnounce()
   await autoMessage.giveCoin()
   await bulkCoin(`#${event.broadcasterName}`, 5)
 }
@@ -58,6 +59,7 @@ export const sendOfflineNotify = async (
     `sniffsSleep sniffsSleep sniffsSleep ${event.broadcasterDisplayName} ไปแล้ววววว`
   )
   autoMessage.clearFlipAnnounce()
+  autoMessage.clearTipmeAnnounce()
   autoMessage.clearCoinInterval()
 }
 

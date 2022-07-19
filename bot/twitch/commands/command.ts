@@ -9,7 +9,7 @@ const command: TwitchCommand = {
     )
     await misc?.sendMessage!(
       channel,
-      '!uptime | !watchtime | !discord | !fb | !yt | !ig'
+      '!uptime | !watchtime | !discord | !fb | !yt | !ig | !tip'
     )
   }
 }

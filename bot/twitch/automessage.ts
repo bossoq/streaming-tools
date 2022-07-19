@@ -9,6 +9,7 @@ export class AutoMessage {
   private lottoInterval: NodeJS.Timeout | undefined
   private flipInterval: NodeJS.Timeout | undefined
   private coinInterval: NodeJS.Timeout | undefined
+  private tipmeInterval: NodeJS.Timeout | undefined
 
   constructor(
     client: Promise<ChatClient>,
@@ -57,11 +58,36 @@ export class AutoMessage {
         return
       }
       await this.client.say(channelName, announce)
-    }, 5 * 60 * 1000)
+    }, 10 * 60 * 1000)
   }
   clearFlipAnnounce() {
     clearInterval(this.flipInterval!)
     this.flipInterval = undefined
+  }
+  async tipmeAnnounce() {
+    const tipmeUrl =
+      process.env.TIPME_LINK || 'https://tipme.in.th/9c7b073691de260013ea2906'
+    const announce = `ให้อาหารแมวได้ที่ ${tipmeUrl} sniffsBaby`
+    const channelName = `#${process.env.TWITCH_CHANNEL_NAME}` || '#bosssoq'
+    if (
+      this.tipmeInterval ||
+      (await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true'
+    )
+      return
+    if ((await this.redis.hGet('twitchBotStat', 'env')) !== 'production') return
+    await this.client.say(channelName, announce)
+    this.tipmeInterval = setInterval(async () => {
+      if ((await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true') {
+        clearInterval(this.tipmeInterval!)
+        this.tipmeInterval = undefined
+        return
+      }
+      await this.client.say(channelName, announce)
+    }, 8 * 60 * 1000)
+  }
+  clearTipmeAnnounce() {
+    clearInterval(this.tipmeInterval!)
+    this.tipmeInterval = undefined
   }
   async giveCoin() {
     const channelName = `#${process.env.TWITCH_CHANNEL_NAME}` || '#bosssoq'

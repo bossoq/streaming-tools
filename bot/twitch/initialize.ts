@@ -37,6 +37,7 @@ export const initializeStat = async (
   }
   if (streamInfo?.type === 'live') {
     await autoMessage.flipAnnounce()
+    await autoMessage.tipmeAnnounce()
     await autoMessage.giveCoin()
   }
   if (streamInfo?.type === 'live' && lottoOpen === 'open')
