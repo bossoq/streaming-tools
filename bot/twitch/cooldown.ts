@@ -14,7 +14,9 @@ const globalCooldown = [
   '!cmd',
   '!command',
   '!commands',
-  '!np'
+  '!np',
+  '!tip',
+  '!tipme'
 ]
 const bypassCooldown = [
   '!env',
