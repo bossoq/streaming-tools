@@ -155,7 +155,7 @@ const kill: TwitchCommand = {
           )
           message = {
             target: targetName,
-            dodgeRage: dodgeRate
+            dodgeRate: dodgeRate
           }
           payload = {
             type: 'shooterDodgeFeed',
