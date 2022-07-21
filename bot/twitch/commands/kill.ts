@@ -34,7 +34,7 @@ const kill: TwitchCommand = {
     const targetMatch = targetNameArg.match(/^@?(\w+)$/)
     let targetName: string
     if (targetMatch && targetMatch[1]) {
-      targetName = targetMatch[1]
+      targetName = targetMatch[1].toLocaleLowerCase()
     } else {
       return
     }
