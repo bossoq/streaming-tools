@@ -9,6 +9,7 @@ const give: TwitchCommand = {
     if (!tag.userInfo.isBroadcaster && !tag.userInfo.isMod) return
 
     const [_, recipentNameArg, ...args] = message.split(/\s+/)
+    if (!recipentNameArg) return
 
     let amount = 1
 

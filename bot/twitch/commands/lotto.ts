@@ -9,6 +9,7 @@ const lotto: TwitchCommand = {
       (await misc?.redis?.hGet('twitchBotStat', 'lotto')) === 'open'
     const checkRole = tag.userInfo.isBroadcaster || tag.userInfo.isMod
     const [_, arg, ...rest] = message.split(/\s+/)
+    if (!arg) return
 
     switch (arg) {
       case 'start':

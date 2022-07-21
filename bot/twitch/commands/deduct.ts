@@ -9,6 +9,7 @@ const deduct: TwitchCommand = {
     if (!tag.userInfo.isBroadcaster && !tag.userInfo.isMod) return
 
     const [_, recipentNameArg, ...args] = message.split(/\s+/)
+    if (!recipentNameArg) return
 
     let amount = 1
 
@@ -24,7 +25,7 @@ const deduct: TwitchCommand = {
     const recipentMatch = recipentNameArg.match(/^@?(\w+)$/)
     let recipentName: string
     if (recipentMatch && recipentMatch[1]) {
-      recipentName = recipentMatch[1]
+      recipentName = recipentMatch[1].toLowerCase()
     } else {
       return
     }
