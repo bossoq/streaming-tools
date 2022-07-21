@@ -37,7 +37,7 @@ export class AutoMessage {
     }, 20 * 60 * 1000)
   }
   clearLottoAnnounce() {
-    clearInterval(this.lottoInterval!)
+    if (this.lottoInterval) clearInterval(this.lottoInterval)
     this.lottoInterval = undefined
   }
   async flipAnnounce() {
@@ -53,7 +53,7 @@ export class AutoMessage {
     await this.client.say(channelName, announce)
     this.flipInterval = setInterval(async () => {
       if ((await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true') {
-        clearInterval(this.flipInterval!)
+        if (this.flipInterval) clearInterval(this.flipInterval)
         this.flipInterval = undefined
         return
       }
@@ -61,7 +61,7 @@ export class AutoMessage {
     }, 10 * 60 * 1000)
   }
   clearFlipAnnounce() {
-    clearInterval(this.flipInterval!)
+    if (this.flipInterval) clearInterval(this.flipInterval)
     this.flipInterval = undefined
   }
   async tipmeAnnounce() {
@@ -78,7 +78,7 @@ export class AutoMessage {
     await this.client.say(channelName, announce)
     this.tipmeInterval = setInterval(async () => {
       if ((await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true') {
-        clearInterval(this.tipmeInterval!)
+        if (this.tipmeInterval) clearInterval(this.tipmeInterval)
         this.tipmeInterval = undefined
         return
       }
@@ -86,7 +86,7 @@ export class AutoMessage {
     }, 8 * 60 * 1000)
   }
   clearTipmeAnnounce() {
-    clearInterval(this.tipmeInterval!)
+    if (this.tipmeInterval) clearInterval(this.tipmeInterval)
     this.tipmeInterval = undefined
   }
   async giveCoin() {
@@ -98,7 +98,7 @@ export class AutoMessage {
       return
     this.coinInterval = setInterval(async () => {
       if ((await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true') {
-        clearInterval(this.coinInterval!)
+        if (this.coinInterval) clearInterval(this.coinInterval)
         this.coinInterval = undefined
         return
       }
@@ -106,7 +106,7 @@ export class AutoMessage {
     }, 60 * 60 * 1000)
   }
   clearCoinInterval() {
-    clearInterval(this.coinInterval!)
+    if (this.coinInterval) clearInterval(this.coinInterval)
     this.coinInterval = undefined
   }
 }

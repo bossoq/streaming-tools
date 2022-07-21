@@ -16,7 +16,7 @@ export const buyLotto = async (
   })
   if (!userData) return
   const totalLottoCount = Math.min(
-    Math.floor(Number(userData.coin) / lottoCost),
+    Math.floor(Number(userData.coin || 0) / lottoCost),
     lottoCount
   )
   if (totalLottoCount > 0) {
@@ -30,9 +30,7 @@ export const buyLotto = async (
     let dataRaw = await misc.redis?.hGet!('twitchBotStat', 'user-lotto')
     let countRaw = await misc.redis?.hGet!('twitchBotStat', 'user-lotto-count')
     if (dataRaw) data = JSON.parse(dataRaw)
-    if (countRaw) {
-      count = Number(countRaw)
-    }
+    if (countRaw) count = Number(countRaw)
     count += totalLottoCount
 
     if (lottoNumber in data) {
@@ -88,6 +86,7 @@ export const drawLotto = async (channel: string, misc: TwitchMisc) => {
   const dataRaw = await misc.redis?.hGet!('twitchBotStat', 'user-lotto')
   const countRaw = await misc.redis?.hGet!('twitchBotStat', 'user-lotto-count')
   if (!dataRaw) return
+  if (!countRaw) return
   const data: Record<string, Record<string, any>> = JSON.parse(dataRaw)
   const count = Number(countRaw)
 
