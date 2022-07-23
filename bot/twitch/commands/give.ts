@@ -25,7 +25,7 @@ const give: TwitchCommand = {
     const recipentMatch = recipentNameArg.match(/^@?(\w+)$/)
     let recipentName: string
     if (recipentMatch && recipentMatch[1]) {
-      recipentName = recipentMatch[1]
+      recipentName = recipentMatch[1].toLowerCase()
     } else {
       return
     }
