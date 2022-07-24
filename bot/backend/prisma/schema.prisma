@@ -17,12 +17,13 @@ datasource db {
 // }
 
 model userInfo {
-  id           BigInt    @id @default(autoincrement())
-  twitchId     String?   @unique
-  twitchName   String?   @unique
-  discordId    String?   @unique
-  coin         BigInt?   @default(0)
-  watchTime    BigInt?   @default(0)
-  subMonth     BigInt?   @default(0)
-  creationTime DateTime? @default(now()) @db.Timestamptz(6)
+  id              BigInt    @id @default(autoincrement())
+  twitchId        String?   @unique
+  twitchName      String?   @unique
+  discordId       String?   @unique
+  coin            BigInt?   @default(0)
+  watchTime       BigInt?   @default(0)
+  watchTimeRedeem BigInt?   @default(0)
+  subMonth        BigInt?   @default(0)
+  creationTime    DateTime? @default(now()) @db.Timestamptz(6)
 }
