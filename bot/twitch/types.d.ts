@@ -27,3 +27,8 @@ export interface TwitchMisc {
   ban?: (channel: string, userName: string, reason?: string) => Promise<void>
   pubMessage?: (channelName: string, name: string, data: string) => void
 }
+
+export interface watchTimeData {
+  status: 'join' | 'part'
+  lastJoin: number
+}

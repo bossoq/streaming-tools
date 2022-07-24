@@ -11,6 +11,7 @@ import {
   onRaid
 } from './actions'
 import { checkCooldown } from './cooldown'
+import { updateWatchTime } from './watchtime'
 import type { createClient } from 'redis'
 import type { TwitchCommand } from './types'
 
@@ -203,12 +204,14 @@ export const twitchClient = async (
   })
   // TODO: Add watchtime function
   // user join channel
-  chatClient.onJoin((_channel, _user) => {
-    // console.log(`${channel} ${user} joined`)
+  chatClient.onJoin(async (channel, user) => {
+    console.log(`${channel} ${user} joined`)
+    await updateWatchTime(user, 'join', { redis: redisClient })
   })
   // user part channel
-  chatClient.onPart((_channel, _user) => {
-    // console.log(`${channel} ${user} parted`)
+  chatClient.onPart(async (channel, user) => {
+    console.log(`${channel} ${user} parted`)
+    await updateWatchTime(user, 'part', { redis: redisClient })
   })
   // user timeout
   chatClient.onTimeout((channel, user, duration) => {
