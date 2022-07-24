@@ -13,7 +13,7 @@ export const initializeStat = async (
     await redis.hSet(
       'twitchBotStat',
       'startDate',
-      streamInfo?.startDate.toString()
+      streamInfo?.startDate.getTime()
     )
   } else if (streamInfo?.type !== 'live' && isLive) {
     await redis.hSet('twitchBotStat', 'isLive', 'false')

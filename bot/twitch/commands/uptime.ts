@@ -6,11 +6,11 @@ const uptime: TwitchCommand = {
     const isLive =
       (await misc?.redis!.hGet('twitchBotStat', 'isLive')) === 'true'
     if (isLive) {
-      const startDate = new Date(
-        (await misc?.redis!.hGet('twitchBotStat', 'startDate')) || ''
+      const startDate = Number(
+        await misc?.redis!.hGet('twitchBotStat', 'startDate')
       )
       const now = new Date()
-      const uptime = Math.floor((now.getTime() - startDate.getTime()) / 1000)
+      const uptime = Math.floor((now.getTime() - startDate) / 1000)
       if (uptime > 0) {
         let day, hour, minute, second
         day = hour = minute = second = 0

@@ -34,7 +34,7 @@ export const sendLiveNotify = async (
   await misc.redis!.hSet(
     'twitchBotStat',
     'startDate',
-    event.startDate.toString()
+    event.startDate.getTime()
   )
   await client.say(
     `#${event.broadcasterName}`,
