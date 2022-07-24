@@ -27,8 +27,11 @@ export const buyLotto = async (
     let data: Record<string, Record<string, any>[]> = {}
     let count = 0
 
-    let dataRaw = await misc.redis?.hGet!('twitchBotStat', 'user-lotto')
-    let countRaw = await misc.redis?.hGet!('twitchBotStat', 'user-lotto-count')
+    const dataRaw = await misc.redis?.hGet!('twitchBotStat', 'user-lotto')
+    const countRaw = await misc.redis?.hGet!(
+      'twitchBotStat',
+      'user-lotto-count'
+    )
     if (dataRaw) data = JSON.parse(dataRaw)
     if (countRaw) count = Number(countRaw)
     count += totalLottoCount
