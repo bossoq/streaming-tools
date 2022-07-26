@@ -27,7 +27,7 @@ export const initializeStat = async (
   if (!lottoOpen) {
     await redis.hSet('twitchBotStat', 'lotto', 'close')
   }
-  if (streamInfo?.type === 'live' && !isLive) {
+  if (streamInfo?.type === 'live') {
     if (!isLive) {
       await redis.hSet('twitchBotStat', 'isLive', 'true')
       await redis.hSet(
