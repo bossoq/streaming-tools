@@ -53,7 +53,6 @@ export const sendOfflineNotify = async (
   misc: TwitchMisc
 ) => {
   await misc.redis!.hSet('twitchBotStat', 'isLive', 'false')
-  await misc.redis!.hDel('twitchBotStat', 'startDate')
   await client.say(
     `#${event.broadcasterName}`,
     `sniffsSleep sniffsSleep sniffsSleep ${event.broadcasterDisplayName} ไปแล้ววววว`
