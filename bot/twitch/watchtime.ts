@@ -136,7 +136,7 @@ export const forceUpdateWatchTime = async (misc: TwitchMisc) => {
 }
 
 const redeemPoint = async (userData: userInfo) => {
-  const watchTimeToPoint = 30
+  const watchTimeToPoint = 60 * 60
   const pointToRedeem = 1
 
   const watchTime = Number(userData.watchTime)
