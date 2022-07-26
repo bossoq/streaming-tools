@@ -14,6 +14,7 @@ import type {
   ChatSubInfo
 } from '@twurple/chat/lib'
 import type { TwitchMisc } from './types'
+import { forceUpdateWatchTime } from './watchtime'
 
 export const sendLiveNotify = async (
   client: ChatClient,
@@ -36,6 +37,7 @@ export const sendLiveNotify = async (
     'startDate',
     event.startDate.getTime()
   )
+  await misc.redis!.hSet('twitchBotStat', 'watchTimeSystem', 'start')
   await client.say(
     `#${event.broadcasterName}`,
     `sniffsHi sniffsHi sniffsHi ${event.broadcasterDisplayName} มาแล้ววววว`
@@ -43,7 +45,8 @@ export const sendLiveNotify = async (
   misc.pubMessage!('webfeed', 'livemessage', JSON.stringify(message))
   await autoMessage.flipAnnounce()
   await autoMessage.tipmeAnnounce()
-  await autoMessage.giveCoin()
+  // await autoMessage.giveCoin()
+  await autoMessage.watchTime()
   await bulkCoin(`#${event.broadcasterName}`, 5)
 }
 
@@ -52,6 +55,8 @@ export const sendOfflineNotify = async (
   event: EventSubStreamOfflineEvent,
   misc: TwitchMisc
 ) => {
+  await forceUpdateWatchTime(misc)
+  await misc.redis!.hSet('twitchBotStat', 'watchTimeSystem', 'stop')
   await misc.redis!.hSet('twitchBotStat', 'isLive', 'false')
   await client.say(
     `#${event.broadcasterName}`,
@@ -59,7 +64,8 @@ export const sendOfflineNotify = async (
   )
   autoMessage.clearFlipAnnounce()
   autoMessage.clearTipmeAnnounce()
-  autoMessage.clearCoinInterval()
+  // autoMessage.clearCoinInterval()
+  autoMessage.clearWatchTimeInterval()
 }
 
 export const handleChannelPoints = async (

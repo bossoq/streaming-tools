@@ -101,6 +101,40 @@ export const updateWatchTime = async (
   )
 }
 
+export const forceUpdateWatchTime = async (misc: TwitchMisc) => {
+  const liveStatus =
+    (await misc.redis?.hGet!('twitchBotStat', 'isLive')) === 'true'
+  const liveDate = Number(await misc.redis?.hGet!('twitchBotStat', 'startDate'))
+  const now = new Date().getTime()
+  let userJoinPartAll: Map<string, watchTimeData> | undefined
+  let resp: userInfo | undefined
+
+  const userJoinPartAllRaw = await misc.redis?.hGetAll!('user-join-part')
+  if (userJoinPartAllRaw) {
+    userJoinPartAll = new Map()
+    for (const key in userJoinPartAllRaw) {
+      userJoinPartAll.set(key, JSON.parse(userJoinPartAllRaw[key]))
+    }
+    userJoinPartAll.forEach(async (userJoinPart, userId) => {
+      if (userJoinPart.status === 'join') {
+        if (liveStatus) {
+          const lastJoin = Number(userJoinPart.lastJoin)
+
+          const watchTimeSession = Math.floor(
+            (now - Math.max(lastJoin, liveDate)) / 1000
+          )
+
+          resp = await prisma.userInfo.update({
+            where: { twitchId: userId },
+            data: { watchTime: { increment: watchTimeSession } }
+          })
+          if (resp) await redeemPoint(resp)
+        }
+      }
+    })
+  }
+}
+
 const redeemPoint = async (userData: userInfo) => {
   const watchTimeToPoint = 30
   const pointToRedeem = 1

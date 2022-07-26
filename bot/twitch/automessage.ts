@@ -1,6 +1,7 @@
 import type { ChatClient } from '@twurple/chat'
 import type { createClient } from 'redis'
 import { bulkCoin } from '../backend/prismaUtils'
+import { forceUpdateWatchTime } from './watchtime'
 
 export class AutoMessage {
   private promiseClient: Promise<ChatClient>
@@ -10,6 +11,7 @@ export class AutoMessage {
   private flipInterval: NodeJS.Timeout | undefined
   private coinInterval: NodeJS.Timeout | undefined
   private tipmeInterval: NodeJS.Timeout | undefined
+  private watchTimeInterval: NodeJS.Timeout | undefined
 
   constructor(
     client: Promise<ChatClient>,
@@ -108,5 +110,24 @@ export class AutoMessage {
   clearCoinInterval() {
     if (this.coinInterval) clearInterval(this.coinInterval)
     this.coinInterval = undefined
+  }
+  async watchTime() {
+    if (
+      this.watchTimeInterval ||
+      (await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true'
+    )
+      return
+    this.watchTimeInterval = setInterval(async () => {
+      if ((await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true') {
+        if (this.watchTimeInterval) clearInterval(this.watchTimeInterval)
+        this.watchTimeInterval = undefined
+        return
+      }
+      await forceUpdateWatchTime({ redis: this.redis })
+    }, 5 * 60 * 1000)
+  }
+  clearWatchTimeInterval() {
+    if (this.watchTimeInterval) clearInterval(this.watchTimeInterval)
+    this.watchTimeInterval = undefined
   }
 }
