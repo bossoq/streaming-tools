@@ -124,11 +124,18 @@ export const forceUpdateWatchTime = async (misc: TwitchMisc) => {
             (now - Math.max(lastJoin, liveDate)) / 1000
           )
 
+          userJoinPart.lastJoin = now
+
           resp = await prisma.userInfo.update({
             where: { twitchId: userId },
             data: { watchTime: { increment: watchTimeSession } }
           })
           if (resp) await redeemPoint(resp)
+          await misc.redis?.hSet!(
+            'user-join-part',
+            userId,
+            JSON.stringify(userJoinPart)
+          )
         }
       }
     })
