@@ -202,15 +202,12 @@ export const twitchClient = async (
       `${channel} ${user} prime paid upgrade ${JSON.stringify(subInfo)}`
     )
   })
-  // TODO: Add watchtime function
   // user join channel
-  chatClient.onJoin(async (channel, user) => {
-    console.log(`${channel} ${user} joined`)
+  chatClient.onJoin(async (_channel, user) => {
     await updateWatchTime(user, 'join', { redis: redisClient })
   })
   // user part channel
-  chatClient.onPart(async (channel, user) => {
-    console.log(`${channel} ${user} parted`)
+  chatClient.onPart(async (_channel, user) => {
     await updateWatchTime(user, 'part', { redis: redisClient })
   })
   // user timeout
