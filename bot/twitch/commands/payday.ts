@@ -1,4 +1,5 @@
 import { bulkCoin } from '../../backend/prismaUtils'
+import { logger } from '../../logger'
 import type { TwitchCommand } from '../types'
 
 const payday: TwitchCommand = {
@@ -21,6 +22,9 @@ const payday: TwitchCommand = {
 
     const chatterLength = await bulkCoin(channel, amount)
 
+    logger.info(
+      `[TWITCH] ${channel} ${tag.userInfo.displayName} payday ${amount} coins to ${chatterLength} users`
+    )
     await misc?.sendFeedMessage!(
       channel,
       `ผู้ชมทั้งหมด ${chatterLength} คน ได้รับ ${amount} sniffscoin sniffsAH`

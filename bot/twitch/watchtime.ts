@@ -1,10 +1,12 @@
 import prisma from '../backend/Prisma'
 import { twitchApiClient } from '../index'
 import { upsertUser } from '../backend/prismaUtils'
+import { logger } from '../logger'
 import type { watchTimeData, TwitchMisc } from './types'
 import type { userInfo } from '@prisma/client'
 
 export const updateWatchTime = async (
+  channel: string,
   user: string,
   status: 'join' | 'part' | 'update',
   misc: TwitchMisc
@@ -13,6 +15,7 @@ export const updateWatchTime = async (
     (await misc.redis?.hGet!('twitchBotStat', 'isLive')) === 'true'
   const liveDate = Number(await misc.redis?.hGet!('twitchBotStat', 'startDate'))
   const now = new Date().getTime()
+  const nowString = new Date(now).toISOString()
   let userJoinPart: watchTimeData | undefined
   let resp: userInfo | undefined
   const userTag = await twitchApiClient.users.getUserByName(user.toLowerCase())
@@ -39,7 +42,13 @@ export const updateWatchTime = async (
           data: { watchTime: { increment: watchTimeSession } }
         })
         userJoinPart.lastJoin = now
-        if (resp) await redeemPoint(resp)
+        logger.verbose(
+          `[TWITCH] ${channel} ${user} update lastJoin to ${nowString}`
+        )
+        logger.verbose(
+          `[TWITCH] ${channel} ${user} watchTimeSession ${watchTimeSession} (Total ${resp.watchTime})`
+        )
+        if (resp) await redeemPoint(channel, resp)
         await misc.redis?.hSet!(
           'user-join-part',
           userTag.id,
@@ -55,10 +64,16 @@ export const updateWatchTime = async (
       if (userJoinPart.status === 'join') {
         if (!liveStatus) {
           userJoinPart.lastJoin = now
+          logger.verbose(
+            `[TWITCH] ${channel} ${user} update lastJoin to ${nowString}`
+          )
         }
       } else if (userJoinPart.status === 'part') {
         userJoinPart.status = 'join'
         userJoinPart.lastJoin = now
+        logger.verbose(
+          `[TWITCH] ${channel} ${user} update lastJoin to ${nowString} and change status to join`
+        )
       }
     } else if (status === 'part') {
       if (liveStatus) {
@@ -72,15 +87,24 @@ export const updateWatchTime = async (
           where: { twitchId: userTag.id },
           data: { watchTime: { increment: watchTimeSession } }
         })
+        logger.verbose(
+          `[TWITCH] ${channel} ${user} watchTimeSession ${watchTimeSession} (Total ${resp.watchTime})`
+        )
       }
       userJoinPart.status = 'part'
       userJoinPart.lastJoin = now
+      logger.verbose(
+        `[TWITCH] ${channel} ${user} update lastJoin to ${nowString} and change status to part`
+      )
     }
   } else {
     userJoinPart = {
       status,
       lastJoin: now
     }
+    logger.verbose(
+      `[TWITCH] ${channel} ${user} add lastJoin to ${nowString} and add status to ${status}`
+    )
     if (status === 'part') {
       if (liveStatus) {
         const watchTimeSession = Math.floor((now - liveDate) / 1000)
@@ -89,11 +113,14 @@ export const updateWatchTime = async (
           where: { twitchId: userTag.id },
           data: { watchTime: { increment: watchTimeSession } }
         })
+        logger.verbose(
+          `[TWITCH] ${channel} ${user} watchTimeSession ${watchTimeSession} (Total ${resp.watchTime})`
+        )
       }
     }
   }
 
-  if (resp) await redeemPoint(resp)
+  if (resp) await redeemPoint(channel, resp)
   await misc.redis?.hSet!(
     'user-join-part',
     userTag.id,
@@ -101,11 +128,15 @@ export const updateWatchTime = async (
   )
 }
 
-export const forceUpdateWatchTime = async (misc: TwitchMisc) => {
+export const forceUpdateWatchTime = async (
+  channel: string,
+  misc: TwitchMisc
+) => {
   const liveStatus =
     (await misc.redis?.hGet!('twitchBotStat', 'isLive')) === 'true'
   const liveDate = Number(await misc.redis?.hGet!('twitchBotStat', 'startDate'))
   const now = new Date().getTime()
+  const nowString = new Date(now).toISOString()
   let userJoinPartAll: Map<string, watchTimeData> | undefined
   let resp: userInfo | undefined
 
@@ -125,12 +156,17 @@ export const forceUpdateWatchTime = async (misc: TwitchMisc) => {
           )
 
           userJoinPart.lastJoin = now
-
           resp = await prisma.userInfo.update({
             where: { twitchId: userId },
             data: { watchTime: { increment: watchTimeSession } }
           })
-          if (resp) await redeemPoint(resp)
+          logger.verbose(
+            `[TWITCH] ${channel} ${userId} update lastJoin to ${nowString}`
+          )
+          logger.verbose(
+            `[TWITCH] ${channel} ${userId} watchTimeSession ${watchTimeSession} (Total ${resp.watchTime})`
+          )
+          if (resp) await redeemPoint(channel, resp)
           await misc.redis?.hSet!(
             'user-join-part',
             userId,
@@ -142,7 +178,7 @@ export const forceUpdateWatchTime = async (misc: TwitchMisc) => {
   }
 }
 
-const redeemPoint = async (userData: userInfo) => {
+const redeemPoint = async (channel: string, userData: userInfo) => {
   const watchTimeToPoint = 60 * 60
   const pointToRedeem = 1
 
@@ -181,5 +217,10 @@ const redeemPoint = async (userData: userInfo) => {
         }
       })
     }
+    logger.info(
+      `[TWITCH] ${channel} ${
+        userData.twitchName ?? userData.twitchId
+      } redeemed ${pointToAdd} coins`
+    )
   }
 }

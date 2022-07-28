@@ -1,5 +1,7 @@
 import dotenv from 'dotenv'
-dotenv.config()
+dotenv.config({
+  path: process.env.NODE_ENV === 'production' ? undefined : '../.env.local'
+})
 
 import { createClient } from 'redis'
 import { DiscordClient } from './discord/discord'
@@ -14,6 +16,7 @@ import { apiClient } from './backend/twitchapiclient'
 import { sendLiveNotify, sendOfflineNotify } from './twitch/actions'
 import { AutoMessage } from './twitch/automessage'
 import { initializeStat } from './twitch/initialize'
+import { logger } from './logger'
 
 const userId = process.env.TWITCH_USERID || '218581653'
 const port = process.env.PORT || 3000
@@ -21,7 +24,7 @@ const redisURL = process.env.REDIS_URL || 'redis://localhost:6379'
 const env = process.env.NODE_ENV || 'development'
 
 const redisClient = createClient({ url: redisURL })
-redisClient.connect().catch(console.error)
+redisClient.connect().catch(logger.error)
 redisClient.hSet('twitchBotStat', 'env', env)
 
 export const discordClient = new DiscordClient()
@@ -32,29 +35,31 @@ export const autoMessage = new AutoMessage(twitchChatClient, redisClient)
 const eventsubMiddleWare = eventsubClient(app)
 eventsubMiddleWare.then((middleWare) => {
   app.listen(port, async () => {
-    console.log(`Successfully start Express Server on ${port}`)
+    logger.info(`[EXPRESS] Successfully start Express Server on ${port}`)
     await middleWare.markAsReady()
 
     await middleWare.subscribeToStreamOnlineEvents(userId, async (e) => {
-      console.log(`${e.broadcasterDisplayName} just went live!`)
+      logger.info(`[TWITCH] #${e.broadcasterDisplayName} just went live`)
       await sendLiveNotify(await twitchChatClient, e, {
         redis: redisClient,
         pubMessage
       })
     })
     await middleWare.subscribeToStreamOfflineEvents(userId, async (e) => {
-      console.log(`${e.broadcasterDisplayName} just went offline`)
+      logger.info(`[TWITCH] #${e.broadcasterDisplayName} just went offline`)
       await sendOfflineNotify(await twitchChatClient, e, {
         redis: redisClient,
         pubMessage
       })
     })
-    console.log(`Successfully create Twitch PubSub Client for ${userId}`)
+    logger.info(
+      `[TWITCH] Successfully create Twitch PubSub client for ${userId}`
+    )
     await requestPubSub()
     pubSubCron.start()
-    console.log('Start Youtube PubSub Client & Cron')
+    logger.info(`[YOUTUBE] Successfully create Youtube PubSub client & cron`)
     ablyMessage()
-    console.log('Successfully sub to Ably')
+    logger.info('[ABLY] Successfully create Ably PubSub client')
     await autoMessage.initClient()
     await initializeStat(redisClient)
   })

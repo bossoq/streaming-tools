@@ -1,9 +1,10 @@
 import { PrismaClient } from '@prisma/client'
+import { logger } from '../logger'
 
 const prisma = new PrismaClient()
 
 prisma.$on('beforeExit', async () => {
-  console.log('Prisma Client is disconnecting...')
+  logger.info('[PRISMA] Prisma Client is disconnecting...')
 })
 
 export default prisma

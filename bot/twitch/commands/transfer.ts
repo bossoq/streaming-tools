@@ -1,6 +1,7 @@
 import prisma from '../../backend/Prisma'
 import { twitchApiClient } from '../../index'
 import { upsertUser } from '../../backend/prismaUtils'
+import { logger } from '../../logger'
 import type { TwitchCommand } from '../types'
 
 const transfer: TwitchCommand = {
@@ -41,6 +42,13 @@ const transfer: TwitchCommand = {
       payerData &&
       Number(payerData.coin) >= Math.ceil(amount * (1 + taxRate))
     ) {
+      logger.info(
+        `[TWITCH] ${channel} ${
+          tag.userInfo.displayName
+        } transfer ${amount} coins to ${recipentName} with ${Math.ceil(
+          amount * taxRate
+        )} tax`
+      )
       await prisma.userInfo.update({
         where: { twitchId: tag.userInfo.userId },
         data: { coin: { decrement: Math.ceil(amount * (1 + taxRate)) } }

@@ -6,6 +6,7 @@ import prisma from '../backend/Prisma'
 import { REST } from '@discordjs/rest'
 import { OAuth2Routes, Routes } from 'discord-api-types/v9'
 import { sendYTNotify } from './youtubehook'
+import { logger } from '../logger'
 import type { YTFeed } from './youtubehook'
 
 const clientId = process.env.DISCORD_CLIENT_ID || ''
@@ -19,7 +20,7 @@ redisClient.connect().catch(console.error)
 export const app = express()
 
 app.get('/ytsub', ({ query: { 'hub.challenge': challenge } }, res) => {
-  console.log(`Youtube PubSubHubBub Challenge is: ${challenge}`)
+  logger.verbose(`[EXPRESS] Youtube PubSub challenge is ${challenge}`)
   res.status(200).end(challenge)
 })
 
@@ -34,7 +35,7 @@ app.post(
       }
       res.status(204).end()
     } else {
-      console.log('YT PubSubHubBub Error')
+      logger.error('[EXPRESS] Youtube PubSub request is empty')
       res.status(204).end()
     }
   }
@@ -81,21 +82,34 @@ app.get('/twitchlink', async (req, res) => {
           }
         })
         if (response) {
+          logger.verbose(`[EXPRESS] Twitch link success for ${twitchName}`)
           res.send(
             '<p>Succesfully connect your twitch account to SniffsBot<br>You can now close this windows</p>'
           )
         } else {
+          logger.error(
+            `[EXPRESS] Twitch link failed for ${twitchName} (dbError: No response)`
+          )
           res
             .status(503)
             .send('<p>Please try again later (dbError: code 2)</p>')
         }
       } else {
+        logger.verbose(
+          `[EXPRESS] Twtch link failed for ${discordId} (No twitch connection)`
+        )
         res.send('<p>There is no Twitch connection in your Discord ID')
       }
     } else {
+      logger.warn(
+        `[EXPRESS] Twitch link failed for ${discordId} (redis: State mismatch)`
+      )
       res.status(403).send('<p>Invalid State Token</p>')
     }
   } else {
+    logger.error(
+      `[EXPRESS] Twitch link failed for ${discordId} (redis: No state)`
+    )
     res.status(503).send('<p>Please try again later (dbError: code 1)</p>')
   }
 })

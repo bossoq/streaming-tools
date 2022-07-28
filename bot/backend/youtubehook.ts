@@ -3,6 +3,7 @@ import cron from 'node-cron'
 import { URLSearchParams } from 'url'
 import { discordClient } from '../index'
 import { preparedYTNotify } from '../discord/lib/PreparedMessage'
+import { logger } from '../logger'
 
 export type VideosMeta = {
   id: string | null | undefined
@@ -58,15 +59,15 @@ export const requestPubSub = async () => {
     }
   )
   if (response.status === 202) {
-    console.log('Successfully Registered with PubSub service')
+    logger.verbose('[YOUTUBE] Successfully subscribed to Youtube PubSub')
   } else {
-    console.error('There is a problem registering with PubSub service')
+    logger.error('[YOUTUBE] Failed to subscribe to Youtube PubSub')
     await requestPubSub()
   }
 }
 
 export const pubSubCron = cron.schedule('0 0 */10 * *', async () => {
-  console.log('Refreshing PubSub')
+  logger.verbose('[YOUTUBE] Refreshing Youtube PubSub')
   await requestPubSub()
 })
 
@@ -82,9 +83,9 @@ export const sendYTNotify = async (ytFeed: YTFeed[]) => {
       channelId: ytFeed[0]['yt:channelid'][0],
       channelTitle: ytFeed[0].author[0].name[0]
     }
-    console.log(`Sending YT Notify for ${meta.title}`)
+    logger.verbose(`[YOUTUBE] New video: ${meta.title}`)
     await discordClient.sendMessage(announceChannel, preparedYTNotify(meta))
   } catch (error) {
-    console.error(error)
+    logger.error(`[YOUTUBE] Failed to send notification: ${error}`)
   }
 }

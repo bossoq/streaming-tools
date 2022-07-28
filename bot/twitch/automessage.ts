@@ -112,6 +112,7 @@ export class AutoMessage {
     this.coinInterval = undefined
   }
   async watchTime() {
+    const channelName = `#${process.env.TWITCH_CHANNEL_NAME}` || '#bosssoq'
     if (
       this.watchTimeInterval ||
       (await this.redis.hGet('twitchBotStat', 'isLive')) !== 'true'
@@ -123,7 +124,7 @@ export class AutoMessage {
         this.watchTimeInterval = undefined
         return
       }
-      await forceUpdateWatchTime({ redis: this.redis })
+      await forceUpdateWatchTime(channelName, { redis: this.redis })
     }, 5 * 60 * 1000)
   }
   clearWatchTimeInterval() {

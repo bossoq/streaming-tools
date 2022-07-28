@@ -1,4 +1,5 @@
 import { autoMessage } from '../../index'
+import { logger } from '../../logger'
 import { buyLotto, drawLotto } from '../lotto'
 import type { TwitchCommand } from '../types'
 
@@ -15,6 +16,9 @@ const lotto: TwitchCommand = {
       case 'start':
         if (checkRole) {
           if (!lottoOpen) {
+            logger.info(
+              `[TWITCH] ${channel} ${tag.userInfo.displayName} start lotto system`
+            )
             await misc?.redis?.hSet('twitchBotStat', 'lotto', 'open')
             const message = {
               status: true
@@ -32,6 +36,9 @@ const lotto: TwitchCommand = {
       case 'stop':
         if (checkRole) {
           if (lottoOpen) {
+            logger.info(
+              `[TWITCH] ${channel} ${tag.userInfo.displayName} stop lotto system`
+            )
             await misc?.redis?.hSet('twitchBotStat', 'lotto', 'close')
             const message = {
               status: false
@@ -53,6 +60,9 @@ const lotto: TwitchCommand = {
       case 'draw':
         if (checkRole) {
           if (lottoOpen) {
+            logger.info(
+              `[TWITCH] ${channel} ${tag.userInfo.displayName} stop lotto system`
+            )
             await misc?.redis?.hSet('twitchBotStat', 'lotto', 'close')
             const message = {
               status: false
@@ -69,6 +79,9 @@ const lotto: TwitchCommand = {
             misc?.pubMessage!('webfeed', 'feedmessage', JSON.stringify(payload))
           }
         }
+        logger.info(
+          `[TWITCH] ${channel} ${tag.userInfo.displayName} draw lotto`
+        )
         autoMessage.clearLottoAnnounce()
         await drawLotto(channel, misc!)
         break

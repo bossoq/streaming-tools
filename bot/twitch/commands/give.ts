@@ -1,6 +1,7 @@
 import prisma from '../../backend/Prisma'
 import { twitchApiClient } from '../../index'
 import { upsertUser } from '../../backend/prismaUtils'
+import { logger } from '../../logger'
 import type { TwitchCommand } from '../types'
 
 const give: TwitchCommand = {
@@ -38,6 +39,9 @@ const give: TwitchCommand = {
       data: { coin: { increment: amount } }
     })
 
+    logger.info(
+      `[TWITCH] ${channel} ${recipentTag.name} given ${amount} coin by ${tag.userInfo.displayName}`
+    )
     await misc?.sendFeedMessage!(
       channel,
       `${recipentTag.displayName} ได้รับ ${amount} sniffscoin sniffsAH`

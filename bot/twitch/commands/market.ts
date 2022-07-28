@@ -1,3 +1,4 @@
+import { logger } from '../../logger'
 import type { TwitchCommand } from '../types'
 
 const market: TwitchCommand = {
@@ -12,6 +13,9 @@ const market: TwitchCommand = {
         (await misc?.redis?.hGet('twitchBotStat', 'market')) === 'open'
       if (open) {
         if (!state) {
+          logger.info(
+            `[TWITCH] ${channel} ${tag.userInfo.displayName} open market`
+          )
           await misc?.redis?.hSet('twitchBotStat', 'market', 'open')
           await misc?.sendMessage!(
             channel,
@@ -20,6 +24,9 @@ const market: TwitchCommand = {
         }
       } else if (close) {
         if (state) {
+          logger.info(
+            `[TWITCH] ${channel} ${tag.userInfo.displayName} close market`
+          )
           await misc?.redis?.hSet('twitchBotStat', 'market', 'close')
           await misc?.sendMessage!(
             channel,

@@ -1,4 +1,5 @@
 import prisma from '../backend/Prisma'
+import { logger } from '../logger'
 import type { TwitchPrivateMessage } from '@twurple/chat/lib/commands/TwitchPrivateMessage'
 import type { TwitchMisc } from './types'
 
@@ -58,6 +59,9 @@ export const buyLotto = async (
         }
       ]
     }
+    logger.info(
+      `[TWITCH] ${channel} ${tag.userInfo.displayName} bought lotto ${lottoNumber} x ${totalLottoCount} lotto`
+    )
     await misc.redis?.hSet!('twitchBotStat', 'user-lotto', JSON.stringify(data))
     await misc.redis?.hSet!('twitchBotStat', 'user-lotto-count', count)
     await misc.sendFeedMessage!(
@@ -130,6 +134,9 @@ export const drawLotto = async (channel: string, misc: TwitchMisc) => {
     })
   })
 
+  logger.info(
+    `[TWITCH] ${channel} Lotto Draw ${drawNumber} ${winnerCount} rewarded (${finalPrize} coins)`
+  )
   await misc.sendMessage!(
     channel,
     `ประกาศผลรางวัล SniffsLotto เลขที่ออก ${drawNumber} sniffsAH มีผู้ชนะทั้งหมด ${winnerCount} คน ได้รับรางวัลรวม ${payout} sniffscoin sniffsHeart`

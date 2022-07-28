@@ -1,4 +1,5 @@
 import prisma from '../../backend/Prisma'
+import { logger } from '../../logger'
 import type { TwitchCommand } from '../types'
 
 const coin: TwitchCommand = {
@@ -17,6 +18,9 @@ const coin: TwitchCommand = {
     })
 
     if (user) {
+      logger.info(
+        `[TWITCH] ${channel} ${tag.userInfo.displayName} has ${user.coin} coin`
+      )
       await misc?.sendMessage!(
         channel,
         `${tag.userInfo.userName} มี ${user.coin} sniffscoin sniffsAH`

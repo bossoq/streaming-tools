@@ -6,7 +6,7 @@ const watchtime: TwitchCommand = {
   name: '!watchtime',
   execute: async (_client, channel, _user, _message, tag, misc) => {
     let watchtime = 0
-    await updateWatchTime(tag.userInfo.userName, 'update', misc!)
+    await updateWatchTime(channel, tag.userInfo.userName, 'update', misc!)
 
     const userData = await prisma.userInfo.findUnique({
       select: { watchTime: true },

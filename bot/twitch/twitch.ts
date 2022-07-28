@@ -12,6 +12,7 @@ import {
 } from './actions'
 import { checkCooldown } from './cooldown'
 import { updateWatchTime } from './watchtime'
+import { logger } from '../logger'
 import type { createClient } from 'redis'
 import type { TwitchCommand } from './types'
 
@@ -32,7 +33,7 @@ export const twitchClient = async (
   })
   await chatClient.connect().catch(console.error)
   chatClient.onRegister(() => {
-    console.log(`${botNick} connected to Twitch on channel ${channelName}`)
+    logger.info(`[TWITCH] #${channelName} Connected to Twitch as ${botNick}`)
   })
 
   const commands = new Map<string, TwitchCommand>()
@@ -59,7 +60,7 @@ export const twitchClient = async (
     if (env) {
       await chatClient.say(channel, message)
     } else {
-      console.log(`[${channel}] ${message}`)
+      logger.verbose(`[TWITCH] ${channel} ${botNick} ${message}`)
     }
   }
   const sendFeedMessage = async (channel: string, message: string) => {
@@ -70,7 +71,7 @@ export const twitchClient = async (
     if (env && !webfeed) {
       await chatClient.say(channel, message)
     } else {
-      console.log(`[${channel}] ${message}`)
+      logger.verbose(`[TWITCH] ${channel} ${botNick} ${message}`)
     }
   }
   const timeout = async (
@@ -89,8 +90,8 @@ export const twitchClient = async (
         reason ?? 'โดนลงดาบนะจ๊ะ'
       )
     } else {
-      console.log(
-        `[${channel}] ${userName} timeout for ${
+      logger.verbose(
+        `[TWITCH] ${channel} ${botNick} timeout ${userName} for ${
           duration ?? 60
         } seconds with reason: ${reason ?? 'โดนลงดาบนะจ๊ะ'}`
       )
@@ -102,8 +103,10 @@ export const twitchClient = async (
     if (env) {
       await chatClient.ban(channel, userName, reason ?? 'โดนลงดาบนะจ๊ะ')
     } else {
-      console.log(
-        `[${channel}] ${userName} ban with reason: ${reason ?? 'โดนลงดาบนะจ๊ะ'}`
+      logger.verbose(
+        `[TWITCH] ${channel} ${botNick} ban ${userName} with reason: ${
+          reason ?? 'โดนลงดาบนะจ๊ะ'
+        }`
       )
     }
   }
@@ -111,8 +114,9 @@ export const twitchClient = async (
   chatClient.onMessage(async (channel, user, message, tag) => {
     const subMonth = parseInt(tag.userInfo.badgeInfo.get('subscriber') || '0')
     await upsertUser(tag.userInfo.userName, tag.userInfo.userId, subMonth)
-    console.log(`${channel} ${user}: ${message}`)
+    logger.verbose(`[TWITCH] ${channel} ${user} ${message}`)
     if (tag.isCheer) {
+      logger.verbose(`[TWITCH] ${channel} ${user} cheered ${tag.bits} bits`)
       await onBits(channel, tag, subMonth, {
         redis: redisClient,
         sendMessage,
@@ -133,7 +137,7 @@ export const twitchClient = async (
     const command = commands.get(commandStr)
 
     if (!command) return
-    const cooldown = await checkCooldown(commandStr, tag, {
+    const cooldown = await checkCooldown(channel, commandStr, tag, {
       redis: redisClient
     })
 
@@ -150,18 +154,29 @@ export const twitchClient = async (
   })
   // normal subscriptions <- this should reward coins
   chatClient.onSub(async (channel, _user, subInfo) => {
+    logger.verbose(`[TWITCH] ${channel} ${subInfo.displayName} subscribed`)
     await onSub(channel, subInfo, { sendMessage, sendFeedMessage, pubMessage })
   })
   // extend subscriptions <- this should not reward coins
-  // chatClient.onSubExtend((channel, user, subInfo) => {
-  //   console.log(`${channel} ${user} sub extend ${JSON.stringify(subInfo)}`)
-  // })
+  chatClient.onSubExtend((channel, user, subInfo) => {
+    logger.info(
+      `[TWITCH] ${channel} ${user} extend subscription ${JSON.stringify(
+        subInfo
+      )}`
+    )
+  })
   // resubscriptions <- this should reward coins
   chatClient.onResub(async (channel, _user, subInfo) => {
+    logger.verbose(`[TWITCH] ${channel} ${subInfo.displayName} resubscribed`)
     await onSub(channel, subInfo, { sendMessage, sendFeedMessage, pubMessage })
   })
   // gift sub to specific viewer // this will be called by on community sub <- this should reward coins
   chatClient.onSubGift(async (channel, _user, subInfo) => {
+    logger.verbose(
+      `[TWITCH] ${channel} ${
+        subInfo.gifter ? subInfo.gifterDisplayName : 'Anonymous'
+      } gifted to ${subInfo.displayName}`
+    )
     await onSubGift(channel, subInfo, {
       sendMessage,
       sendFeedMessage,
@@ -170,6 +185,11 @@ export const twitchClient = async (
   })
   // gift sub non specific viewer <- this should reward coins but need to check with onSubGift
   chatClient.onCommunitySub(async (channel, _user, subInfo) => {
+    logger.verbose(
+      `[TWITCH] ${channel} ${
+        subInfo.gifter ? subInfo.gifterDisplayName : 'Anonymous'
+      } gifted ${subInfo.count} subs`
+    )
     await onCommunitySub(channel, subInfo, {
       sendMessage,
       sendFeedMessage,
@@ -178,48 +198,73 @@ export const twitchClient = async (
   })
   // gift paid upgrade <- not sure
   chatClient.onGiftPaidUpgrade((channel, user, subInfo) => {
-    console.log(`${channel} ${user} paid upgrade ${JSON.stringify(subInfo)}`)
+    logger.info(
+      `[TWITCH] ${channel} ${user} paid upgrade ${JSON.stringify(subInfo)}`
+    )
   })
   // gift a gift sub to non specific viewer <- not sure
   chatClient.onCommunityPayForward((channel, user, forwardInfo) => {
-    console.log(`${channel} ${user} pay forward ${JSON.stringify(forwardInfo)}`)
+    logger.info(
+      `[TWITCH] ${channel} ${user} community pay forward ${JSON.stringify(
+        forwardInfo
+      )}`
+    )
   })
   // gift a gift sub specific viewer <- not sure
   chatClient.onStandardPayForward((channel, user, forwardInfo) => {
-    console.log(`${channel} ${user} pay forward ${JSON.stringify(forwardInfo)}`)
+    logger.info(
+      `[TWITCH] ${channel} ${user} standard pay forward ${JSON.stringify(
+        forwardInfo
+      )}`
+    )
   })
   // reward gift !!??
   chatClient.onRewardGift((channel, user, giftInfo) => {
-    console.log(`${channel} ${user} reward gift ${JSON.stringify(giftInfo)}`)
+    logger.info(
+      `[TWITCH] ${channel} ${user} reward gift ${JSON.stringify(giftInfo)}`
+    )
   })
   // gift sub non specific viewer using prime <- this should reward coins
   chatClient.onPrimeCommunityGift((channel, user, subInfo) => {
-    console.log(`${channel} ${user} prime gift sub ${JSON.stringify(subInfo)}`)
+    logger.info(
+      `[TWITCH] ${channel} ${user} prime community gift ${JSON.stringify(
+        subInfo
+      )}`
+    )
   })
   // prime paid upgrade <- not sure
   chatClient.onPrimePaidUpgrade((channel, user, subInfo) => {
-    console.log(
-      `${channel} ${user} prime paid upgrade ${JSON.stringify(subInfo)}`
+    logger.info(
+      `[TWITCH] ${channel} ${user} prime paid upgrade ${JSON.stringify(
+        subInfo
+      )}`
     )
   })
   // user join channel
-  chatClient.onJoin(async (_channel, user) => {
-    await updateWatchTime(user, 'join', { redis: redisClient })
+  chatClient.onJoin(async (channel, user) => {
+    logger.verbose(`[TWITCH] ${channel} ${user} joined`)
+    await updateWatchTime(channel, user, 'join', { redis: redisClient })
   })
   // user part channel
-  chatClient.onPart(async (_channel, user) => {
-    await updateWatchTime(user, 'part', { redis: redisClient })
+  chatClient.onPart(async (channel, user) => {
+    logger.verbose(`[TWITCH] ${channel} ${user} parted`)
+    await updateWatchTime(channel, user, 'part', { redis: redisClient })
   })
   // user timeout
   chatClient.onTimeout((channel, user, duration) => {
-    console.log(`${channel} ${user} timed out for ${duration}`)
+    logger.verbose(
+      `[TWITCH] ${channel} ${user} timeout for ${duration} seconds`
+    )
   })
   // user banned
   chatClient.onBan((channel, user) => {
-    console.log(`${channel} ${user} was banned`)
+    logger.verbose(`[TWITCH] ${channel} ${user} banned`)
   })
   // not sure if this called when raid or be raided
   chatClient.onRaid(async (channel, _user, raidInfo) => {
+    logger.verbose(
+      `[TWITCH] ${channel} ${raidInfo.displayName} raided ${raidInfo.viewerCount} viewers`
+    )
     await onRaid(channel, raidInfo, { sendFeedMessage, pubMessage })
   })
   return chatClient

@@ -2,6 +2,7 @@ import prisma from '../../backend/Prisma'
 import { twitchApiClient } from '../../index'
 import { upsertUser } from '../../backend/prismaUtils'
 import type { TwitchCommand } from '../types'
+import { logger } from '../../logger'
 
 const deduct: TwitchCommand = {
   name: '!deduct',
@@ -38,6 +39,9 @@ const deduct: TwitchCommand = {
       data: { coin: { decrement: amount } }
     })
 
+    logger.info(
+      `[TWITCH] ${channel} ${recipentTag.name} deducted ${amount} coin by ${tag.userInfo.displayName}`
+    )
     await misc?.sendFeedMessage!(
       channel,
       `${recipentTag.displayName} ถูกหัก ${amount} sniffscoin sniffsAH`

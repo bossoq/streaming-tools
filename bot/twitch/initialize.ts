@@ -5,8 +5,9 @@ import { forceUpdateWatchTime } from './watchtime'
 export const initializeStat = async (
   redis: ReturnType<typeof createClient>
 ) => {
+  const channelName = process.env.TWITCH_CHANNEL_NAME || 'bosssoq'
   const streamInfo = await twitchApiClient.streams.getStreamByUserName(
-    process.env.TWITCH_CHANNEL_NAME || 'bosssoq'
+    channelName
   )
   const feedEnable = await redis.hGet('twitchBotStat', 'feedEnable')
   const lottoCount = await redis.hGet('twitchBotStat', 'user-lotto-count')
@@ -48,7 +49,7 @@ export const initializeStat = async (
     }
   } else {
     if (watchTimeSystem) {
-      await forceUpdateWatchTime({ redis })
+      await forceUpdateWatchTime(`#${channelName}`, { redis })
       await redis.hSet('twitchBotStat', 'watchTimeSystem', 'stop')
     }
     if (isLive) {

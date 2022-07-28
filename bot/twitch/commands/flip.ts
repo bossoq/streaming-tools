@@ -1,5 +1,6 @@
 import prisma from '../../backend/Prisma'
 import type { TwitchCommand } from '../types'
+import { logger } from '../../logger'
 
 const flip: TwitchCommand = {
   name: '!flip',
@@ -78,6 +79,11 @@ const flip: TwitchCommand = {
         return
     }
 
+    logger.info(
+      `[TWITCH] ${channel} ${tag.userInfo.displayName} ${
+        flipResult ? 'win' : 'lose'
+      } ${bet} coin`
+    )
     if (flipResult) {
       await prisma.userInfo.update({
         where: { twitchId: tag.userInfo.userId },

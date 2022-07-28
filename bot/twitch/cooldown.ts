@@ -1,4 +1,5 @@
 import type { TwitchPrivateMessage } from '@twurple/chat/lib/commands/TwitchPrivateMessage'
+import { logger } from '../logger'
 import type { TwitchMisc } from './types'
 
 const globalCooldown = [
@@ -36,6 +37,7 @@ const bypassCooldown = [
 const defaultCooldown = 20 * 1000
 
 export const checkCooldown = async (
+  channel: string,
   command: string,
   tag: TwitchPrivateMessage,
   misc: TwitchMisc
@@ -65,8 +67,14 @@ export const checkCooldown = async (
         'global',
         timestampNow.toString()
       )
+      logger.verbose(
+        `[TWITCH] ${channel} ${tag.userInfo.displayName} successfully used ${command}`
+      )
       return true
     } else {
+      logger.verbose(
+        `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to use ${command} (cooldown)`
+      )
       return false
     }
   } else {
@@ -80,8 +88,14 @@ export const checkCooldown = async (
         tag.userInfo.userId,
         timestampNow.toString()
       )
+      logger.verbose(
+        `[TWITCH] ${channel} ${tag.userInfo.displayName} successfully used ${command}`
+      )
       return true
     } else {
+      logger.verbose(
+        `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to use ${command} (cooldown)`
+      )
       return false
     }
   }

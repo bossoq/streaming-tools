@@ -1,5 +1,6 @@
 import prisma from '../../backend/Prisma'
 import { twitchApiClient } from '../../index'
+import { logger } from '../../logger'
 import type { TwitchCommand } from '../types'
 
 const kill: TwitchCommand = {
@@ -28,6 +29,9 @@ const kill: TwitchCommand = {
           channel,
           'กรุณาระบุชื่อผู้ใช้ที่จะจ้างมือปืนสนิฟ'
         )
+      logger.info(
+        `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill (no targetName)`
+      )
       return
     }
 
@@ -36,6 +40,9 @@ const kill: TwitchCommand = {
     if (targetMatch && targetMatch[1]) {
       targetName = targetMatch[1].toLocaleLowerCase()
     } else {
+      logger.info(
+        `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill ${targetNameArg} (regex failed)`
+      )
       return
     }
 
@@ -44,6 +51,9 @@ const kill: TwitchCommand = {
     )
     const allChatters = chatterList.allChatters
     if (!allChatters.includes(targetName) && targetName !== 'me') {
+      logger.info(
+        `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill ${targetName} (not in channel)`
+      )
       if (available)
         await misc?.sendMessage!(channel, `ไม่พบชื่อ ${targetName} ในสมรภูมินะ`)
       return
@@ -54,6 +64,9 @@ const kill: TwitchCommand = {
         misc?.sendMessage!(
           channel,
           `มือปืนหาเป้าหมาย ${targetName} ไม่เจอ ลองยิงใหม่นะ`
+        )
+        logger.info(
+          `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill ${targetName} (cannot retrieve role)`
         )
         return
       }
@@ -68,6 +81,9 @@ const kill: TwitchCommand = {
           misc?.sendMessage!(
             channel,
             `${tag.userInfo.displayName} กับ ${targetName} ไม่ตีกันเองสิ`
+          )
+          logger.info(
+            `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill ${targetName} (moderator/broadcaster)`
           )
           return
         } else {
@@ -116,6 +132,9 @@ const kill: TwitchCommand = {
       let payload: Record<string, any>
       switch (shooterState) {
         case 'success':
+          logger.info(
+            `[TWITCH] ${channel} ${tag.userInfo.displayName} killed ${targetName} (${duration}s) (${dodgeRate}% dodge)`
+          )
           if (!override)
             await misc?.redis?.hSet(
               '!kill-cooldown',
@@ -145,6 +164,9 @@ const kill: TwitchCommand = {
           }
           break
         case 'dodge':
+          logger.info(
+            `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill ${targetName} (dodge) (${dodgeRate}% dodge)`
+          )
           await misc?.sendFeedMessage!(
             channel,
             `${
@@ -164,6 +186,9 @@ const kill: TwitchCommand = {
           }
           break
         case 'vip':
+          logger.info(
+            `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill ${targetName} (VIP)`
+          )
           await misc?.timeout!(
             channel,
             tag.userInfo.userName,
@@ -185,6 +210,9 @@ const kill: TwitchCommand = {
           }
           break
         case 'vipNomoney':
+          logger.info(
+            `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill ${targetName} (VIP no money)`
+          )
           await misc?.timeout!(
             channel,
             tag.userInfo.userName,
@@ -212,6 +240,9 @@ const kill: TwitchCommand = {
           }
           break
         case 'noMoney':
+          logger.info(
+            `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill ${targetName} (no money)`
+          )
           await misc?.timeout!(
             channel,
             tag.userInfo.userName,
@@ -233,6 +264,9 @@ const kill: TwitchCommand = {
           }
           break
         case 'me':
+          logger.info(
+            `[TWITCH] ${channel} ${tag.userInfo.displayName} suicide (${duration}s)`
+          )
           await misc?.timeout!(
             channel,
             tag.userInfo.userName,

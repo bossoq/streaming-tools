@@ -1,3 +1,4 @@
+import { logger } from '../../logger'
 import type { TwitchCommand } from '../types'
 
 const env: TwitchCommand = {
@@ -14,9 +15,15 @@ const env: TwitchCommand = {
       if (prod && !env) {
         await misc?.redis?.hSet('twitchBotStat', 'env', 'production')
         await client.say(channel, 'Environment set to production')
+        logger.info(
+          `[TWITCH] ${channel} ${tag.userInfo.displayName} set env to production`
+        )
       } else if (dev && env) {
         await misc?.redis?.hSet('twitchBotStat', 'env', 'development')
         await client.say(channel, 'Environment set to development')
+        logger.info(
+          `[TWITCH] ${channel} ${tag.userInfo.displayName} set env to development`
+        )
       }
     }
   }

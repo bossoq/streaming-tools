@@ -55,7 +55,7 @@ export const sendOfflineNotify = async (
   event: EventSubStreamOfflineEvent,
   misc: TwitchMisc
 ) => {
-  await forceUpdateWatchTime(misc)
+  await forceUpdateWatchTime(`#${event.broadcasterName}`, misc)
   await misc.redis!.hSet('twitchBotStat', 'watchTimeSystem', 'stop')
   await misc.redis!.hSet('twitchBotStat', 'isLive', 'false')
   await client.say(

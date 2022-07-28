@@ -7,6 +7,7 @@ import {
   TextChannel
 } from 'discord.js'
 import { playMusic } from './playerhelper'
+import { logger } from '../logger'
 import type { SlashCommandBuilder } from '@discordjs/builders'
 import type { SendEmbed } from './lib/MessageEmbed'
 
@@ -48,7 +49,7 @@ export class DiscordClient {
     }
 
     this.client.once('ready', () => {
-      console.log(`Logged into Discord as ${this.client.user!.tag}`)
+      logger.info(`[DISCORD] Logged in as ${this.client.user!.tag}!`)
       setInterval(() => {
         const servers = this.client.guilds.cache.size
         const servercount = this.client.guilds.cache.reduce(
@@ -72,7 +73,7 @@ export class DiscordClient {
         try {
           await command.execute(interaction)
         } catch (error) {
-          console.error(error)
+          logger.error(`[DISCORD] Interaction error: ${error}`)
           await interaction.reply({
             content: 'There was an error while executing this command!',
             ephemeral: true
@@ -103,7 +104,7 @@ export class DiscordClient {
     )
 
     if (!guild) {
-      console.warn('Guild not found!')
+      logger.warn(`[DISCORD] Guild not found: ${process.env.DEV_GUILD_ID}`)
       return
     }
 
@@ -112,7 +113,7 @@ export class DiscordClient {
     ) as TextChannel
 
     if (!channel) {
-      console.warn('Channel not found!')
+      logger.warn(`[DISCORD] Channel not found: ${channelId}`)
       return
     }
 
