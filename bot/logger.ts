@@ -1,7 +1,7 @@
 import { createLogger, format, transports } from 'winston'
 
 export const logger = createLogger({
-  level: process.env.NODE_ENV === 'production' ? 'verbose' : 'debug',
+  level: process.env.NODE_ENV === 'production' ? 'verbose' : 'verbose',
   format: format.combine(
     format.colorize(),
     format.timestamp({

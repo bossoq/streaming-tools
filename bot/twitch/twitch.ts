@@ -159,7 +159,7 @@ export const twitchClient = async (
   })
   // extend subscriptions <- this should not reward coins
   chatClient.onSubExtend((channel, user, subInfo) => {
-    logger.info(
+    logger.verbose(
       `[TWITCH] ${channel} ${user} extend subscription ${JSON.stringify(
         subInfo
       )}`
@@ -198,13 +198,13 @@ export const twitchClient = async (
   })
   // gift paid upgrade <- not sure
   chatClient.onGiftPaidUpgrade((channel, user, subInfo) => {
-    logger.info(
+    logger.verbose(
       `[TWITCH] ${channel} ${user} paid upgrade ${JSON.stringify(subInfo)}`
     )
   })
   // gift a gift sub to non specific viewer <- not sure
   chatClient.onCommunityPayForward((channel, user, forwardInfo) => {
-    logger.info(
+    logger.verbose(
       `[TWITCH] ${channel} ${user} community pay forward ${JSON.stringify(
         forwardInfo
       )}`
@@ -212,7 +212,7 @@ export const twitchClient = async (
   })
   // gift a gift sub specific viewer <- not sure
   chatClient.onStandardPayForward((channel, user, forwardInfo) => {
-    logger.info(
+    logger.verbose(
       `[TWITCH] ${channel} ${user} standard pay forward ${JSON.stringify(
         forwardInfo
       )}`
@@ -220,13 +220,13 @@ export const twitchClient = async (
   })
   // reward gift !!??
   chatClient.onRewardGift((channel, user, giftInfo) => {
-    logger.info(
+    logger.verbose(
       `[TWITCH] ${channel} ${user} reward gift ${JSON.stringify(giftInfo)}`
     )
   })
   // gift sub non specific viewer using prime <- this should reward coins
   chatClient.onPrimeCommunityGift((channel, user, subInfo) => {
-    logger.info(
+    logger.verbose(
       `[TWITCH] ${channel} ${user} prime community gift ${JSON.stringify(
         subInfo
       )}`
@@ -234,7 +234,7 @@ export const twitchClient = async (
   })
   // prime paid upgrade <- not sure
   chatClient.onPrimePaidUpgrade((channel, user, subInfo) => {
-    logger.info(
+    logger.verbose(
       `[TWITCH] ${channel} ${user} prime paid upgrade ${JSON.stringify(
         subInfo
       )}`
