@@ -25,7 +25,12 @@ const upsertUserId = async (twitchName: string[]) => {
       )
       allUsersData.map(async (user) => {
         logger.verbose(`[CRONJOB] Upserting ${user.name} with ${user.id}`)
-        await upsertUser(user.name, user.id)
+        try {
+          await upsertUser(user.name, user.id)
+        } catch (e) {
+          logger.error(`[CRONJOB] Error upserting ${user.name} with ${user.id}`)
+          logger.error(e)
+        }
       })
     }
   }
