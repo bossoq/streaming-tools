@@ -17,6 +17,7 @@ import { sendLiveNotify, sendOfflineNotify } from './twitch/actions'
 import { AutoMessage } from './twitch/automessage'
 import { initializeStat } from './twitch/initialize'
 import { logger } from './logger'
+import { maintainDatabase } from './backend/twitchidmap'
 
 const userId = process.env.TWITCH_USERID || '218581653'
 const port = process.env.PORT || 3000
@@ -62,6 +63,7 @@ eventsubMiddleWare.then((middleWare) => {
     logger.info('[ABLY] Successfully create Ably PubSub client')
     await autoMessage.initClient()
     await initializeStat(redisClient)
+    await maintainDatabase()
   })
 })
 

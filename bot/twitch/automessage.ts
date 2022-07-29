@@ -1,7 +1,8 @@
+import { bulkCoin } from '../backend/prismaUtils'
+import { maintainDatabase } from '../backend/twitchidmap'
+import { forceUpdateWatchTime } from './watchtime'
 import type { ChatClient } from '@twurple/chat'
 import type { createClient } from 'redis'
-import { bulkCoin } from '../backend/prismaUtils'
-import { forceUpdateWatchTime } from './watchtime'
 
 export class AutoMessage {
   private promiseClient: Promise<ChatClient>
@@ -12,6 +13,7 @@ export class AutoMessage {
   private coinInterval: NodeJS.Timeout | undefined
   private tipmeInterval: NodeJS.Timeout | undefined
   private watchTimeInterval: NodeJS.Timeout | undefined
+  private cronjobDatabaseInterval: NodeJS.Timeout | undefined
 
   constructor(
     client: Promise<ChatClient>,
@@ -130,5 +132,16 @@ export class AutoMessage {
   clearWatchTimeInterval() {
     if (this.watchTimeInterval) clearInterval(this.watchTimeInterval)
     this.watchTimeInterval = undefined
+  }
+  async cronjobDatabase() {
+    if (this.cronjobDatabaseInterval) return
+    this.cronjobDatabaseInterval = setInterval(async () => {
+      await maintainDatabase()
+    }, 10 * 60 * 1000)
+  }
+  clearCronjobDatabaseInterval() {
+    if (this.cronjobDatabaseInterval)
+      clearInterval(this.cronjobDatabaseInterval)
+    this.cronjobDatabaseInterval = undefined
   }
 }
