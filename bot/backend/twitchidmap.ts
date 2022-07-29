@@ -28,12 +28,45 @@ const upsertUserId = async (twitchName: string[]) => {
         try {
           await upsertUser(user.name, user.id)
         } catch (e) {
-          logger.error(`[CRONJOB] Error upserting ${user.name} with ${user.id}`)
-          logger.error(e)
+          logger.error(
+            `[CRONJOB] Error upserting ${user.name} with ${user.id} (reason: ${e})`
+          )
+          await handleDupId(user.name, user.id)
         }
       })
     }
   }
+}
+
+const handleDupId = async (twitchName: string, twitchId: string) => {
+  const userByName = await prisma.userInfo.findUnique({
+    where: { twitchName }
+  })
+  if (!userByName) return
+  const userById = await prisma.userInfo.findUnique({
+    where: { twitchId }
+  })
+  if (!userById) return
+
+  const totalCoin = Number(userByName.coin) + Number(userById.coin)
+  const totalWatchTime =
+    Number(userByName.watchTime) + Number(userById.watchTime)
+  const totalWatchTimeRedeem =
+    Number(userByName.watchTimeRedeem) + Number(userById.watchTimeRedeem)
+
+  await prisma.userInfo.delete({
+    where: { twitchName }
+  })
+  await prisma.userInfo.update({
+    where: { twitchId },
+    data: {
+      twitchName,
+      coin: totalCoin,
+      watchTime: totalWatchTime,
+      watchTimeRedeem: totalWatchTimeRedeem
+    }
+  })
+  logger.verbose(`[CRONJOB] Merged ${twitchName} with ${twitchId}`)
 }
 
 const deleteNullId = async () => {
