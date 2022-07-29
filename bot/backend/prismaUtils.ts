@@ -88,13 +88,28 @@ export const bulkCoin = async (
   channel: string,
   coinAmount: number
 ): Promise<number> => {
+  const maxSize = 100
   const chatterList = (
     await twitchApiClient.unsupported.getChatters(channel.slice(1))
   ).allChatters
 
+  const usersData: { twitchId: string; twitchName: string }[] = []
+  for (let i = 0; i < chatterList.length; i += maxSize) {
+    const allUsersData = await twitchApiClient.users.getUsersByNames(
+      chatterList.slice(i, i + maxSize)
+    )
+    allUsersData.map(async (user) => {
+      usersData.push({
+        twitchId: user.id,
+        twitchName: user.name
+      })
+    })
+  }
+
   // upsert user
   await prisma.userInfo.createMany({
-    data: chatterList.map((v) => ({ twitchName: v })),
+    data: usersData,
+    // data: chatterList.map((v) => ({ twitchName: v })),
     skipDuplicates: true
   })
   // add coin
