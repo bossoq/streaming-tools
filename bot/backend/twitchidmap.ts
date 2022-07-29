@@ -79,6 +79,8 @@ const deleteNullId = async () => {
 export const maintainDatabase = async () => {
   logger.info('[CRONJOB] Maintaining database')
   const twitchName = await queryNullId()
-  await upsertUserId(twitchName)
-  await deleteNullId()
+  if (twitchName.length) {
+    await upsertUserId(twitchName)
+    await deleteNullId()
+  }
 }
