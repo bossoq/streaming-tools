@@ -331,6 +331,7 @@ export const onRaid = async (
     channel,
     `ขอบคุณ ${raidInfo.displayName} สำหรับการ Raid ผู้ชมจำนวน ${raidInfo.viewerCount} คน ค่าา sniffsHeart sniffsHeart sniffsHeart`
   )
+  await shoutOut(channel, raidInfo.displayName, misc)
   const message = {
     username: raidInfo.displayName,
     viewer: raidInfo.viewerCount
@@ -341,4 +342,13 @@ export const onRaid = async (
     timeout: 10000
   }
   misc.pubMessage!('webfeed', 'feedmessage', JSON.stringify(payload))
+}
+
+export const shoutOut = async (
+  channel: string,
+  displayName: string,
+  misc: TwitchMisc
+) => {
+  const message = `ฝากติดตามช่อง ${displayName} ด้วยน้าา twitch.tv/${displayName.toLowerCase()}`
+  misc.sendMessage!(channel, message)
 }

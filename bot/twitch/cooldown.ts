@@ -32,7 +32,9 @@ const bypassCooldown = [
   '!lotto',
   '!raffle',
   '!flip',
-  '!transfer'
+  '!transfer',
+  '!shoutout',
+  '!so'
 ]
 const defaultCooldown = 20 * 1000
 
