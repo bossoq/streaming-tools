@@ -265,7 +265,11 @@ export const twitchClient = async (
     logger.verbose(
       `[TWITCH] ${channel} ${raidInfo.displayName} raided ${raidInfo.viewerCount} viewers`
     )
-    await onRaid(channel, raidInfo, { sendFeedMessage, pubMessage })
+    await onRaid(channel, raidInfo, {
+      sendMessage,
+      sendFeedMessage,
+      pubMessage
+    })
   })
   return chatClient
 }
