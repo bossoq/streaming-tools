@@ -7,7 +7,7 @@ const youtube: TwitchCommand = {
       process.env.YOUTUBE_LINK || 'https://www.youtube.com/SniffsLive'
     await misc?.sendMessage!(
       channel,
-      `${tag.userInfo.displayName} Channel ร้างของสนิฟเอง ${youtubeUrl} sniffsBaby`
+      `${tag.userInfo.displayName} ช่องร้างของแมว ${youtubeUrl}`
     )
   }
 }

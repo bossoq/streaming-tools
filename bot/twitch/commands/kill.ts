@@ -80,7 +80,7 @@ const kill: TwitchCommand = {
         if (override) {
           misc?.sendMessage!(
             channel,
-            `${tag.userInfo.displayName} กับ ${targetName} ไม่ตีกันเองสิ`
+            `${tag.userInfo.displayName} กับ ${targetName} ตีกันๆ`
           )
           logger.info(
             `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill ${targetName} (moderator/broadcaster)`
@@ -145,11 +145,11 @@ const kill: TwitchCommand = {
             channel,
             targetName,
             duration,
-            `${tag.userInfo.displayName} จ้างมือปืนสนิฟยิงปิ้วๆ ${duration} วินาที`
+            `${tag.userInfo.displayName} จ้างมือปืนแมวยิงปิ้วๆ ${duration} วินาที`
           )
           await misc?.sendFeedMessage!(
             channel,
-            `${tag.userInfo.displayName} จ้างมือปืนสนิฟยิง ${targetName} ${duration} วินาที sniffsAH`
+            `${tag.userInfo.displayName} จ้างมือปืนแมวยิง ${targetName} ${duration} วินาที`
           )
           message = {
             username: tag.userInfo.displayName,
@@ -171,7 +171,7 @@ const kill: TwitchCommand = {
             channel,
             `${
               tag.userInfo.displayName
-            } หลบมือปืนสนิฟได้ sniffsHeart ${targetName} เสียใจด้วยนะ (Dodge = ${Math.floor(
+            } หลบมือปืนแมวได้ไง ${targetName} เสียใจด้วยนะ (Dodge = ${Math.floor(
               dodgeRate
             )}%)`
           )
@@ -197,7 +197,7 @@ const kill: TwitchCommand = {
           )
           await misc?.sendFeedMessage!(
             channel,
-            `${tag.userInfo.displayName} บังอาจนักนะ PunOko บินไปเองซะ ${duration} วินาที`
+            `${tag.userInfo.displayName} บังอาจนักนะ! บินไปเองซะ ${duration} วินาที`
           )
           message = {
             username: tag.userInfo.displayName,
@@ -225,7 +225,7 @@ const kill: TwitchCommand = {
             channel,
             `${
               tag.userInfo.displayName
-            } ไม่มีเงินจ้างมือปืน ยังจะเหิมเกริม PunOko บินไปซะ ${Math.floor(
+            } ไม่มีเงินจ้างแมว ยังจะเหิมเกริมอีก! ${Math.floor(
               duration * 2
             )} วินาที`
           )
@@ -251,7 +251,7 @@ const kill: TwitchCommand = {
           )
           await misc?.sendFeedMessage!(
             channel,
-            `${tag.userInfo.displayName} ไม่มีเงินจ้างมือปืน PunOko โดนมือปืนยิงตาย ${duration} วินาที`
+            `${tag.userInfo.displayName} ไม่มีเงินจ้างแมว (โดนมือปืนยิงตาย) ${duration} วินาที`
           )
           message = {
             username: tag.userInfo.displayName,
@@ -275,7 +275,7 @@ const kill: TwitchCommand = {
           )
           await misc?.sendFeedMessage!(
             channel,
-            `${tag.userInfo.displayName} แวะไปเยือนยมโลก ${duration} วินาที sniffsAH`
+            `${tag.userInfo.displayName} แวะไปเยือนยมโลก ${duration} วินาที`
           )
           message = {
             username: tag.userInfo.displayName,

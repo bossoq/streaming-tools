@@ -66,7 +66,7 @@ export const buyLotto = async (
     await misc.redis?.hSet!('twitchBotStat', 'user-lotto-count', count)
     await misc.sendFeedMessage!(
       channel,
-      `${tag.userInfo.displayName} ซื้อ SniffsLotto หมายเลข ${lottoNumber} จำนวน ${totalLottoCount} ใบ สำเร็จ sniffsHeart sniffsHeart sniffsHeart`
+      `${tag.userInfo.displayName} ซื้อ SniffsLotto หมายเลข ${lottoNumber} จำนวน ${totalLottoCount} ใบ สำเร็จ`
     )
     const message = {
       username: tag.userInfo.displayName,
@@ -84,7 +84,7 @@ export const buyLotto = async (
   } else {
     await misc.sendMessage!(
       channel,
-      `${tag.userInfo.displayName} ไม่มีเงินแล้วยังจะซื้ออีก PunOko PunOko PunOko`
+      `${tag.userInfo.displayName} ไม่มีเงินแล้วยังจะซื้ออีก!`
     )
   }
 }
@@ -139,7 +139,7 @@ export const drawLotto = async (channel: string, misc: TwitchMisc) => {
   )
   await misc.sendMessage!(
     channel,
-    `ประกาศผลรางวัล SniffsLotto เลขที่ออก ${drawNumber} sniffsAH มีผู้ชนะทั้งหมด ${winnerCount} คน ได้รับรางวัลรวม ${payout} sniffscoin sniffsHeart`
+    `ประกาศผลรางวัล SniffsLotto เลขที่ออก ${drawNumber} มีผู้ชนะทั้งหมด ${winnerCount} คน ได้รับรางวัลรวม ${payout} sniffscoin`
   )
   if (winnerCount > 0 && winnerCount <= 5) {
     let announce = 'ผู้โชคดีได้แก่ '
@@ -152,7 +152,7 @@ export const drawLotto = async (channel: string, misc: TwitchMisc) => {
         announce += `, ${v.twitchName}`
       }
     })
-    announce += ' คร่า sniffsHeart sniffsHeart sniffsHeart'
+    announce += ' นะต้าว'
     await misc.sendMessage!(channel, announce)
   }
 

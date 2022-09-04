@@ -7,7 +7,7 @@ const discord: TwitchCommand = {
       process.env.DISCORD_LINK || 'https://discord.gg/Q3AMaHQEGU'
     await misc?.sendMessage!(
       channel,
-      `${tag.userInfo.displayName} มาคุยกันได้ใน Discord ${discordUrl} sniffsBaby`
+      `${tag.userInfo.displayName} มาคุยกันได้ใน ${discordUrl}`
     )
   }
 }

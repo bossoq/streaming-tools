@@ -40,7 +40,7 @@ const flip: TwitchCommand = {
     if (Number(userData.coin) < bet) {
       await misc?.sendMessage!(
         channel,
-        `${tag.userInfo.displayName} ไม่มีเงินแล้วยังจะซื้ออีก PunOko PunOko PunOko`
+        `${tag.userInfo.displayName} ไม่มีเงินแล้วยังจะซื้ออีก!`
       )
       return
     }
@@ -91,14 +91,14 @@ const flip: TwitchCommand = {
       })
       await misc?.sendFeedMessage!(
         channel,
-        `เหรียญออกที่${winSide}ค่า! sniffsHeart ${
-          tag.userInfo.displayName
-        } ได้รับ ${bet * 2} sniffscoin`
+        `เหรียญออกที่${winSide} ต้าว ${tag.userInfo.displayName} ได้รับ ${
+          bet * 2
+        } sniffscoin`
       )
     } else {
       await misc?.sendFeedMessage!(
         channel,
-        `ไม่น้าาาเหรียญออกที่${winSide} เสียใจด้วย ${tag.userInfo.displayName} sniffsCry`
+        `วะฮ่าๆ เหรียญออก${winSide} โดนกิงง ${tag.userInfo.displayName}`
       )
     }
     const messageFeed = {

@@ -48,10 +48,7 @@ const lotto: TwitchCommand = {
               message,
               timeout: 30000
             }
-            await misc?.sendMessage!(
-              channel,
-              'ปิดการซื้อ SniffsLotto แล้วจ้า รอประกาศผลรางวัลเลย sniffsAH'
-            )
+            await misc?.sendMessage!(channel, 'ปิดการซื้อ SniffsLotto แล้วจ้า')
             misc?.pubMessage!('webfeed', 'feedmessage', JSON.stringify(payload))
           }
         }
@@ -72,10 +69,7 @@ const lotto: TwitchCommand = {
               message,
               timeout: 30000
             }
-            await misc?.sendMessage!(
-              channel,
-              'ปิดการซื้อ SniffsLotto แล้วจ้า รอประกาศผลรางวัลเลย sniffsAH'
-            )
+            await misc?.sendMessage!(channel, 'ปิดการซื้อ SniffsLotto แล้วจ้า')
             misc?.pubMessage!('webfeed', 'feedmessage', JSON.stringify(payload))
           }
         }

@@ -6,7 +6,7 @@ const discord: TwitchCommand = {
     const tipmeUrl = process.env.TIPME_LINK || 'https://tipme.in.th/sniffslive'
     await misc?.sendMessage!(
       channel,
-      `${tag.userInfo.displayName} ให้อาหารแมวได้ที่ ${tipmeUrl} sniffsBaby`
+      `${tag.userInfo.displayName} ให้กัญชาได้ที่ ${tipmeUrl}`
     )
   }
 }

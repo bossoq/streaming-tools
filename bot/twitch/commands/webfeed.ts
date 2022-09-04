@@ -13,7 +13,7 @@ const webfeed: TwitchCommand = {
       if (on) {
         if (!state) {
           await misc?.redis?.hSet('twitchBotStat', 'feedEnable', 'on')
-          await misc?.sendMessage!(channel, 'Webfeed System started sniffsAH')
+          await misc?.sendMessage!(channel, 'Webfeed System started')
           const message = {
             status: true
           }
@@ -27,7 +27,7 @@ const webfeed: TwitchCommand = {
       } else if (off) {
         if (state) {
           await misc?.redis?.hSet('twitchBotStat', 'feedEnable', 'off')
-          await misc?.sendMessage!(channel, 'Webfeed System stopped sniffsAH')
+          await misc?.sendMessage!(channel, 'Webfeed System stopped')
           const message = {
             status: false
           }

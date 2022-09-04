@@ -7,7 +7,7 @@ const instagram: TwitchCommand = {
       process.env.INSTAGRAM_LINK || 'https://www.instagram.com/musicsn/'
     await misc?.sendMessage!(
       channel,
-      `${tag.userInfo.displayName} IG ของสนิฟ ${instagramUrl} sniffsBaby`
+      `${tag.userInfo.displayName} IG มีไว้ตามสาว ${instagramUrl}`
     )
   }
 }

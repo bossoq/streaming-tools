@@ -27,7 +27,7 @@ const payday: TwitchCommand = {
     )
     await misc?.sendFeedMessage!(
       channel,
-      `ผู้ชมทั้งหมด ${chatterLength} คน ได้รับ ${amount} sniffscoin sniffsAH`
+      `ผู้ชมทั้งหมด ${chatterLength} คน ได้รับ ${amount} sniffscoin`
     )
     const messageFeed = {
       coin: amount,

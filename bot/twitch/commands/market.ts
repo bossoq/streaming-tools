@@ -17,10 +17,7 @@ const market: TwitchCommand = {
             `[TWITCH] ${channel} ${tag.userInfo.displayName} open market`
           )
           await misc?.redis?.hSet('twitchBotStat', 'market', 'open')
-          await misc?.sendMessage!(
-            channel,
-            'เปิดตลาดแล้วจ้าาาา~ sniffsBaby sniffsBaby'
-          )
+          await misc?.sendMessage!(channel, 'เปิดตลาดแล้วจ้าาาา~')
         }
       } else if (close) {
         if (state) {
@@ -28,10 +25,7 @@ const market: TwitchCommand = {
             `[TWITCH] ${channel} ${tag.userInfo.displayName} close market`
           )
           await misc?.redis?.hSet('twitchBotStat', 'market', 'close')
-          await misc?.sendMessage!(
-            channel,
-            'ปิดตลาดแล้วจ้าาาา~ sniffsBaby sniffsBaby'
-          )
+          await misc?.sendMessage!(channel, 'ปิดตลาดแล้วจ้าาาา~')
         }
       }
     }

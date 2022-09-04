@@ -44,7 +44,7 @@ const deduct: TwitchCommand = {
     )
     await misc?.sendFeedMessage!(
       channel,
-      `${recipentTag.displayName} ถูกหัก ${amount} sniffscoin sniffsAH`
+      `${recipentTag.displayName} ถูกหัก ${amount} sniffscoin`
     )
     const messageFeed = {
       username: recipentTag.displayName,

@@ -40,7 +40,7 @@ export const sendLiveNotify = async (
   await misc.redis!.hSet('twitchBotStat', 'watchTimeSystem', 'start')
   await client.say(
     `#${event.broadcasterName}`,
-    `sniffsHi sniffsHi sniffsHi ${event.broadcasterDisplayName} มาแล้ววววว`
+    `${event.broadcasterDisplayName} แมวมา`
   )
   misc.pubMessage!('webfeed', 'livemessage', JSON.stringify(message))
   await autoMessage.flipAnnounce()
@@ -60,7 +60,7 @@ export const sendOfflineNotify = async (
   await misc.redis!.hSet('twitchBotStat', 'isLive', 'false')
   await client.say(
     `#${event.broadcasterName}`,
-    `sniffsSleep sniffsSleep sniffsSleep ${event.broadcasterDisplayName} ไปแล้ววววว`
+    `${event.broadcasterDisplayName} แมวไปนอนละ`
   )
   autoMessage.clearFlipAnnounce()
   autoMessage.clearTipmeAnnounce()
@@ -112,7 +112,7 @@ export const onBits = async (
     })
     await misc.sendFeedMessage!(
       channel,
-      `${tag.userInfo.userName} ได้รับ ${coinAmount} sniffscoin จากการ Bit จำนวน ${tag.bits} bit sniffsHeart sniffsHeart sniffsHeart`
+      `${tag.userInfo.userName} ได้รับ ${coinAmount} sniffscoin จากการ Bit จำนวน ${tag.bits} bit`
     )
     const message = {
       username: tag.userInfo.userName,
@@ -128,7 +128,7 @@ export const onBits = async (
   } else {
     await misc.sendMessage!(
       channel,
-      `ขอบคุณ ${tag.userInfo.userName} สำหรับ ${tag.bits} บิทค้าาา sniffsHeart sniffsHeart sniffsHeart`
+      `ขอบคุณ ${tag.userInfo.userName} สำหรับ ${tag.bits} บิทขนมแมวเลีย`
     )
   }
 }
@@ -168,7 +168,7 @@ export const onSub = async (
 
   await misc.sendMessage!(
     channel,
-    `ยินดีต้อนรับ ${subInfo.displayName} มาเป็นต้าวๆของสนิฟ sniffsHeart sniffsHeart sniffsHeart`
+    `ต้าว ${subInfo.displayName} จงมาเป็งทาสแมวว`
   )
   await misc.sendFeedMessage!(
     channel,
@@ -229,7 +229,7 @@ export const onSubGift = async (
     })
     await misc.sendFeedMessage!(
       channel,
-      `${subInfo.gifterDisplayName} ได้รับ ${coinAmount} sniffscoin จากการ Gift ให้ ${subInfo.displayName} ระดับ ${planSelect} sniffsHeart sniffsHeart sniffsHeart`
+      `${subInfo.gifterDisplayName} ได้รับ ${coinAmount} sniffscoin จากการ Gift ให้ ${subInfo.displayName} ระดับ ${planSelect}`
     )
     await misc.sendFeedMessage!(
       channel,
@@ -251,7 +251,7 @@ export const onSubGift = async (
   } else {
     await misc.sendFeedMessage!(
       channel,
-      `ขอบคุณ Gift ระดับ ${planSelect} จากผู้ไม่ประสงค์ออกนามค่าา sniffsHeart sniffsHeart sniffsHeart`
+      `ขอบคุณ Gift ระดับ ${planSelect} จากทาสแมวนิรนามนะคะ`
     )
     await misc.sendFeedMessage!(
       channel,
@@ -300,7 +300,7 @@ export const onCommunitySub = async (
   if (subInfo.gifter && subInfo.gifterUserId) {
     await misc.sendFeedMessage!(
       channel,
-      `${subInfo.gifterDisplayName} ได้รับ ${coinAmount} sniffscoin จากการ Gift ระดับ ${planSelect} ให้สมาชิก ${subInfo.count} คน sniffsHeart sniffsHeart sniffsHeart`
+      `${subInfo.gifterDisplayName} ได้รับ ${coinAmount} sniffscoin จากการ Gift ระดับ ${planSelect} ให้สมาชิก ${subInfo.count} คน`
     )
     const message = {
       username: subInfo.gifterDisplayName,
@@ -317,7 +317,7 @@ export const onCommunitySub = async (
   } else {
     await misc.sendMessage!(
       channel,
-      `ขอบคุณ Gift ระดับ ${planSelect} จากผู้ไม่ประสงค์ออกนามจำนวน ${subInfo.count} sniffsHeart sniffsHeart sniffsHeart`
+      `ขอบคุณ Gift ระดับ ${planSelect} จากทาสแมวนิรนามนะคะจำนวน ${subInfo.count} กิฟ`
     )
   }
 }
@@ -329,7 +329,7 @@ export const onRaid = async (
 ) => {
   misc.sendFeedMessage!(
     channel,
-    `ขอบคุณ ${raidInfo.displayName} สำหรับการ Raid ผู้ชมจำนวน ${raidInfo.viewerCount} คน ค่าา sniffsHeart sniffsHeart sniffsHeart`
+    `ขอบคุณ ${raidInfo.displayName} ที่ส่งทาสแมวมาจำนวน ${raidInfo.viewerCount} คน ด้วยน้าา`
   )
   await shoutOut(channel, raidInfo.displayName, misc)
   const message = {

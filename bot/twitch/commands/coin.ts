@@ -23,7 +23,7 @@ const coin: TwitchCommand = {
       )
       await misc?.sendMessage!(
         channel,
-        `${tag.userInfo.userName} มี ${user.coin} sniffscoin sniffsAH`
+        `${tag.userInfo.userName} มี ${user.coin} sniffscoin`
       )
     }
   }

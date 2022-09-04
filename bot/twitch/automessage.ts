@@ -26,8 +26,7 @@ export class AutoMessage {
     this.client = await this.promiseClient
   }
   async lottoAnnounce() {
-    const announce =
-      'sniffsHi เร่เข้ามาเร่เข้ามา SniffsLotto ใบละ 5 coins !lotto ตามด้วยเลข 2 หลัก ประกาศรางวัลตอนปิดไลฟ์จ้า sniffsAH'
+    const announce = 'SniffsLotto ใบละ 5 coins !lotto ตามด้วยเลข 2 หลัก'
     const channelName = `#${process.env.TWITCH_CHANNEL_NAME}` || '#bosssoq'
     if (
       this.lottoInterval ||
@@ -45,8 +44,7 @@ export class AutoMessage {
     this.lottoInterval = undefined
   }
   async flipAnnounce() {
-    const announce =
-      'sniffsHi เร่เข้ามาเร่เข้ามา ปั่นแปะจ้า ปั่นแปะ !flip ตามด้วย h หรือ t sniffsAH'
+    const announce = 'ทอยเหรียญ !flip ตามด้วย h หรือ t'
     const channelName = `#${process.env.TWITCH_CHANNEL_NAME}` || '#bosssoq'
     if (
       this.flipInterval ||
@@ -71,7 +69,7 @@ export class AutoMessage {
   async tipmeAnnounce() {
     const tipmeUrl =
       process.env.TIPME_LINK || 'https://tipme.in.th/9c7b073691de260013ea2906'
-    const announce = `ให้อาหารแมวได้ที่ ${tipmeUrl} sniffsBaby`
+    const announce = `ให้กัญชาแมวได้ที่ ${tipmeUrl}`
     const channelName = `#${process.env.TWITCH_CHANNEL_NAME}` || '#bosssoq'
     if (
       this.tipmeInterval ||

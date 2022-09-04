@@ -7,7 +7,7 @@ const facebook: TwitchCommand = {
       process.env.FACEBOOK_LINK || 'https://www.facebook.com/sniffslive/'
     await misc?.sendMessage!(
       channel,
-      `${tag.userInfo.displayName} มาตามเพจสนิฟที่นี่ ${facebookUrl} sniffsBaby`
+      `${tag.userInfo.displayName} เพจแมว ${facebookUrl}`
     )
   }
 }

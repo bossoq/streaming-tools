@@ -18,25 +18,19 @@ const uptime: TwitchCommand = {
         hour = Math.floor((uptime % 86400) / 3600)
         minute = Math.floor((uptime % 3600) / 60)
         second = Math.floor(uptime % 60)
-        let respText = `${tag.userInfo.displayName} สนิฟไลฟ์มาแล้ว`
+        let respText = `${tag.userInfo.displayName} แมวไลฟ์มาแล้ว`
         if (day > 0) respText += ` ${day} วัน`
         if (hour > 0) respText += ` ${hour} ชั่วโมง`
         if (minute > 0) respText += ` ${minute} นาที`
         if (second > 0) respText += ` ${second} วินาที`
-        respText += ' น้าาา sniffsHeart sniffsHeart sniffsHeart'
+        respText += ' น้าาา'
         await misc?.sendMessage!(channel, respText)
       } else {
-        await misc?.sendMessage!(
-          channel,
-          'ยังไม่ถึงเวลาไลฟ์น้าาาา sniffsHeart sniffsHeart sniffsHeart'
-        )
+        await misc?.sendMessage!(channel, 'ยังไม่ถึงเวลาไลฟ์นี่นา')
       }
       return
     } else {
-      await misc?.sendMessage!(
-        channel,
-        'ยังไม่ถึงเวลาไลฟ์น้าาาา sniffsHeart sniffsHeart sniffsHeart'
-      )
+      await misc?.sendMessage!(channel, 'ยังไม่ถึงเวลาไลฟ์นี่นา')
     }
   }
 }

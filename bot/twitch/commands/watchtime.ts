@@ -26,12 +26,12 @@ const watchtime: TwitchCommand = {
       if (hour > 0) respText += ` ${hour} ชั่วโมง`
       if (minute > 0) respText += ` ${minute} นาที`
       if (second > 0) respText += ` ${second} วินาที`
-      respText += ' น้าาา sniffsHeart sniffsHeart sniffsHeart'
+      respText += 'แหนะ'
       await misc?.sendMessage!(channel, respText)
     } else {
       await misc?.sendMessage!(
         channel,
-        `${tag.userInfo.displayName} เพิ่งมาดู ${channel} สิน้าาาาา sniffsAH`
+        `${tag.userInfo.displayName} เพิ่งมาดูช่องแมวสิน้าาาา`
       )
     }
     return
