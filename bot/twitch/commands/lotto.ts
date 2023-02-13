@@ -72,12 +72,12 @@ const lotto: TwitchCommand = {
             await misc?.sendMessage!(channel, 'ปิดการซื้อ SniffsLotto แล้วจ้า')
             misc?.pubMessage!('webfeed', 'feedmessage', JSON.stringify(payload))
           }
+          logger.info(
+            `[TWITCH] ${channel} ${tag.userInfo.displayName} draw lotto`
+          )
+          autoMessage.clearLottoAnnounce()
+          await drawLotto(channel, misc!)
         }
-        logger.info(
-          `[TWITCH] ${channel} ${tag.userInfo.displayName} draw lotto`
-        )
-        autoMessage.clearLottoAnnounce()
-        await drawLotto(channel, misc!)
         break
       default:
         if (lottoOpen) {
