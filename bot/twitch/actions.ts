@@ -6,7 +6,7 @@ import type { TwitchPrivateMessage } from '@twurple/chat/lib/commands/TwitchPriv
 import type {
   EventSubStreamOfflineEvent,
   EventSubStreamOnlineEvent
-} from '@twurple/eventsub/lib'
+} from '@twurple/eventsub-base'
 import type {
   ChatCommunitySubInfo,
   ChatRaidInfo,
@@ -26,10 +26,10 @@ export const sendLiveNotify = async (
   const broadcastInfo = await event.getBroadcaster()
   const message = {
     userName: event.broadcasterDisplayName,
-    title: streamInfo.title,
-    gameName: streamInfo.gameName,
-    viewers: streamInfo.viewers,
-    thumbnailUrl: streamInfo.thumbnailUrl,
+    title: streamInfo?.title,
+    gameName: streamInfo?.gameName,
+    viewers: streamInfo?.viewers,
+    thumbnailUrl: streamInfo?.thumbnailUrl,
     profileUrl: broadcastInfo.profilePictureUrl
   }
   await misc.redis!.hSet(

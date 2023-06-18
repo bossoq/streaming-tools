@@ -39,14 +39,14 @@ eventsubMiddleWare.then((middleWare) => {
     logger.info(`[EXPRESS] Successfully start Express Server on ${port}`)
     await middleWare.markAsReady()
 
-    await middleWare.subscribeToStreamOnlineEvents(userId, async (e) => {
+    middleWare.onStreamOnline(userId, async (e) => {
       logger.info(`[TWITCH] #${e.broadcasterDisplayName} just went live`)
       await sendLiveNotify(await twitchChatClient, e, {
         redis: redisClient,
         pubMessage
       })
     })
-    await middleWare.subscribeToStreamOfflineEvents(userId, async (e) => {
+    middleWare.onStreamOffline(userId, async (e) => {
       logger.info(`[TWITCH] #${e.broadcasterDisplayName} just went offline`)
       await sendOfflineNotify(await twitchChatClient, e, {
         redis: redisClient,

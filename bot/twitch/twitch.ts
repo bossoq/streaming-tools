@@ -31,10 +31,15 @@ export const twitchClient = async (
     channels: [channelName],
     requestMembershipEvents: true
   })
-  await chatClient.connect().catch(console.error)
-  chatClient.onRegister(() => {
-    logger.info(`[TWITCH] #${channelName} Connected to Twitch as ${botNick}`)
-  })
+  await chatClient
+    .connect()
+    .then(() =>
+      logger.info(`[TWITCH] #${channelName} Connected to Twitch as ${botNick}`)
+    )
+    .catch(console.error)
+  // chatClient.onRegister(() => {
+  //   logger.info(`[TWITCH] #${channelName} Connected to Twitch as ${botNick}`)
+  // })
 
   const commands = new Map<string, TwitchCommand>()
 
@@ -83,12 +88,16 @@ export const twitchClient = async (
     const env =
       (await redisClient.hGet('twitchBotStat', 'env')) === 'production'
     if (env) {
-      await chatClient.timeout(
+      await chatClient.say(
         channel,
-        userName,
-        duration ?? 60,
-        reason ?? 'โดนลงดาบนะจ๊ะ'
+        `!timeout ${userName} ${duration ?? 60} ${reason ?? 'โดนลงดาบนะจ๊ะ'}`
       )
+      // await chatClient.timeout(
+      //   channel,
+      //   userName,
+      //   duration ?? 60,
+      //   reason ?? 'โดนลงดาบนะจ๊ะ'
+      // )
     } else {
       logger.verbose(
         `[TWITCH] ${channel} ${botNick} timeout ${userName} for ${
@@ -101,7 +110,11 @@ export const twitchClient = async (
     const env =
       (await redisClient.hGet('twitchBotStat', 'env')) === 'production'
     if (env) {
-      await chatClient.ban(channel, userName, reason ?? 'โดนลงดาบนะจ๊ะ')
+      await chatClient.say(
+        channel,
+        `!ban ${userName} ${reason ?? 'โดนลงดาบนะจ๊ะ'}`
+      )
+      // await chatClient.ban(channel, userName, reason ?? 'โดนลงดาบนะจ๊ะ')
     } else {
       logger.verbose(
         `[TWITCH] ${channel} ${botNick} ban ${userName} with reason: ${

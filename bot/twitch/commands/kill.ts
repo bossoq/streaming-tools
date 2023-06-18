@@ -3,6 +3,8 @@ import { twitchApiClient } from '../../index'
 import { logger } from '../../logger'
 import type { TwitchCommand } from '../types'
 
+const twitchBotNick = 'bosssoq'
+
 const kill: TwitchCommand = {
   name: '!kill',
   execute: async (_client, channel, _user, message, tag, misc) => {
@@ -46,10 +48,18 @@ const kill: TwitchCommand = {
       return
     }
 
-    const chatterList = await twitchApiClient.unsupported.getChatters(
-      channel.slice(1)
+    // const chatterList = await twitchApiClient.unsupported.getChatters(
+    //   channel.slice(1)
+    // )
+    const paginatedChatters = await twitchApiClient.chat.getChatters(
+      (await twitchApiClient.users.getUserByName(channel.slice(1)))?.id || '',
+      (await twitchApiClient.users.getUserByName(twitchBotNick))?.id || '',
+      { limit: 1000 }
     )
-    const allChatters = chatterList.allChatters
+    // const allChatters = chatterList.allChatters
+    const allChatters = paginatedChatters.data.map(
+      (chatter) => chatter.userName
+    )
     if (!allChatters.includes(targetName) && targetName !== 'me') {
       logger.info(
         `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill ${targetName} (not in channel)`
@@ -59,7 +69,15 @@ const kill: TwitchCommand = {
       return
     }
     if (available || override) {
-      const targetRole = chatterList.allChattersWithStatus.get(targetName)
+      // const targetRole = chatterList.allChattersWithStatus.get(targetName)
+      const targetRole = await twitchApiClient.moderation.checkUserMod(
+        (await twitchApiClient.users.getUserByName(channel.slice(1)))?.id || '',
+        (await twitchApiClient.users.getUserByName(targetName))?.id || ''
+      )
+      const targetVip = await twitchApiClient.channels.checkVipForUser(
+        (await twitchApiClient.users.getUserByName(channel.slice(1)))?.id || '',
+        (await twitchApiClient.users.getUserByName(targetName))?.id || ''
+      )
       if (!targetRole && targetName !== 'me') {
         misc?.sendMessage!(
           channel,
@@ -76,7 +94,7 @@ const kill: TwitchCommand = {
         payRate = 10
         shooterState = 'me'
       }
-      if (targetRole === 'broadcaster' || targetRole === 'moderators') {
+      if (targetRole || targetName === channel.slice(1)) {
         if (override) {
           misc?.sendMessage!(
             channel,
@@ -90,7 +108,7 @@ const kill: TwitchCommand = {
           shooterState = 'vip'
         }
       }
-      if (targetRole === 'vips') {
+      if (targetVip) {
         if (!override && !tag.userInfo.isVip) {
           shooterState = 'vip'
         }
