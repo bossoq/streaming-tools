@@ -26,7 +26,7 @@ const redisURL = process.env.REDIS_URL || 'redis://localhost:6379'
 const env = process.env.NODE_ENV || 'development'
 
 const redisClient = createClient({ url: redisURL })
-redisClient.connect().catch(logger.error)
+redisClient.connect()
 redisClient.on('connect', () => {
   logger.info('[REDIS] Successfully connect to Redis')
 })
