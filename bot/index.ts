@@ -18,6 +18,7 @@ import { AutoMessage } from './twitch/automessage'
 import { initializeStat } from './twitch/initialize'
 import { logger } from './logger'
 import { maintainDatabase } from './backend/twitchidmap'
+import { EventSubSubscription } from '@twurple/eventsub-base'
 
 const userId = process.env.TWITCH_USERID || '218581653'
 const port = process.env.PORT || 3000
@@ -27,6 +28,9 @@ const env = process.env.NODE_ENV || 'development'
 const redisClient = createClient({ url: redisURL })
 redisClient.connect().catch(logger.error)
 redisClient.hSet('twitchBotStat', 'env', env)
+
+let onlineSub: EventSubSubscription
+let offlineSub: EventSubSubscription
 
 export const discordClient = new DiscordClient()
 export const player = new Player()
@@ -39,14 +43,14 @@ eventsubMiddleWare.then((middleWare) => {
     logger.info(`[EXPRESS] Successfully start Express Server on ${port}`)
     await middleWare.markAsReady()
 
-    middleWare.onStreamOnline(userId, async (e) => {
+    onlineSub = middleWare.onStreamOnline(userId, async (e) => {
       logger.info(`[TWITCH] #${e.broadcasterDisplayName} just went live`)
       await sendLiveNotify(await twitchChatClient, e, {
         redis: redisClient,
         pubMessage
       })
     })
-    middleWare.onStreamOffline(userId, async (e) => {
+    offlineSub = middleWare.onStreamOffline(userId, async (e) => {
       logger.info(`[TWITCH] #${e.broadcasterDisplayName} just went offline`)
       await sendOfflineNotify(await twitchChatClient, e, {
         redis: redisClient,
@@ -69,6 +73,8 @@ eventsubMiddleWare.then((middleWare) => {
 
 const cleanExit = () => {
   redisClient.disconnect()
+  onlineSub?.stop()
+  offlineSub?.stop()
   process.exit()
 }
 
