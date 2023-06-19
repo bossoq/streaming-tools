@@ -78,16 +78,16 @@ const kill: TwitchCommand = {
         (await twitchApiClient.users.getUserByName(channel.slice(1)))?.id || '',
         (await twitchApiClient.users.getUserByName(targetName))?.id || ''
       )
-      if (!targetRole && targetName !== 'me') {
-        misc?.sendMessage!(
-          channel,
-          `มือปืนหาเป้าหมาย ${targetName} ไม่เจอ ลองยิงใหม่นะ`
-        )
-        logger.info(
-          `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill ${targetName} (cannot retrieve role)`
-        )
-        return
-      }
+      // if (!targetRole && targetName !== 'me') {
+      //   misc?.sendMessage!(
+      //     channel,
+      //     `มือปืนหาเป้าหมาย ${targetName} ไม่เจอ ลองยิงใหม่นะ`
+      //   )
+      //   logger.info(
+      //     `[TWITCH] ${channel} ${tag.userInfo.displayName} failed to kill ${targetName} (cannot retrieve role)`
+      //   )
+      //   return
+      // }
       let shooterState = 'success'
       if (targetName === 'me') {
         if (override) return
