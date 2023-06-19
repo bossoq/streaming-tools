@@ -27,6 +27,18 @@ const env = process.env.NODE_ENV || 'development'
 
 const redisClient = createClient({ url: redisURL })
 redisClient.connect().catch(logger.error)
+redisClient.on('connect', () => {
+  logger.info('[REDIS] Successfully connect to Redis')
+})
+redisClient.on('error', (err) => {
+  logger.error(`[REDIS] ${err}`)
+})
+redisClient.on('reconnecting', () => {
+  logger.info('[REDIS] Reconnecting to Redis')
+})
+redisClient.on('ready', () => {
+  logger.info('[REDIS] Redis is ready')
+})
 redisClient.hSet('twitchBotStat', 'env', env)
 
 let onlineSub: EventSubSubscription
